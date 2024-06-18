@@ -1,0 +1,10 @@
+//Inicio
+integer x = 0
+real y = 3.0
+character cadena = "Prueba de codigo"
+if(x<y)
+print("Entro)
+else
+write cadena
+/* Fin de Codigo*/
+
