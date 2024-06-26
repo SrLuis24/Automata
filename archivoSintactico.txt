@@ -1,22 +1,13 @@
-program test,a,b,c;
+program test;
 var a,b,c : integer;
 begin
     z = 10;
     x = x + w;
     y = 10;
-    if x == 2 then
-    begin
-        z = x + 1;
-    end
-    else
-    begin
-        v = 10;
-    end
-
     while
         x > y
     do
     begin
-    y = 1 + 1;
+        y = 1 + 1;
     end
 end.

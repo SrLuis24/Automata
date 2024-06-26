@@ -4,6 +4,7 @@ public class Nodo {
     int renglon;
     Nodo vaciar = null; // Nodo hijo que será null al crearse el primer nodo
 
+
     Nodo(String lexema, int token, int renglon) {
         this.lexema = lexema;
         this.token = token;

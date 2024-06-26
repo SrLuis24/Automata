@@ -12,7 +12,6 @@ public class Main {
     static int simbolo = 0;
     static String lexema = "";
     static int renglon = 1;
-
     static Transiciones transiciones = new Transiciones();
     static int[][] matriz = transiciones.getMatriz();
 
@@ -130,6 +129,7 @@ public class Main {
                         // Se tomará como una palabra o un conjunto de caracteres que se agregara al lexema
                         // Esto formará una cadena
                         lexema += (char) simbolo;
+
                     }
 
                     // Se agregará el caracter o el conjunto de caracteres como un nodo
@@ -160,7 +160,7 @@ public class Main {
 
     private static void agregarNodo(){
         // Se crea un nuevo nodo asignando el lexema y token
-        Nodo n = new Nodo(lexema,token, renglon);
+        Nodo n = new Nodo(lexema, token, renglon);
 
         // Al ser el primer nodo actual es null
         if (actual == null){
@@ -211,8 +211,14 @@ public class Main {
     private static void imprimirResultado(){
         nodo = actual; // Se le asigna a nodo los nodos actuales
 
-        new Sintactico(nodo);
-        int renglonFinal = Sintactico.getRenglon();
+        //new Sintactico(nodo);
+        Sintactico2 sintactico = new Sintactico2(nodo);
+
+        SymbolTable symbolTable = sintactico.getSymbolTable();
+        System.out.println("Tabla de Simbolos: ");
+        System.out.println(symbolTable.toString());
+
+        int renglonFinal = Sintactico2.getRenglon();
 
         System.out.println(); // Se dará un espacio en blanco para separar de los mensajes de error
         // Se recorre los nodos en caso de ser diferente de null
@@ -231,6 +237,15 @@ public class Main {
 
         }
 
+    }
+
+    private static void printTree(TreeNode node, String indent) {
+        if (node != null) {
+            System.out.println(indent + node.value + " :  " + node.lexema);
+            for (TreeNode child : node.children) {
+                printTree(child, indent + "  ");
+            }
+        }
     }
 
 
