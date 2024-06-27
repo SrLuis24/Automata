@@ -224,14 +224,14 @@ public class Main {
         // Se recorre los nodos en caso de ser diferente de null
         while (nodo != null){
             // Se imprime el lexema y el token
-            System.out.println(nodo.lexema + "  Token: " + nodo.token);
+            //    System.out.println(nodo.lexema + "  Token: " + nodo.token);
             // Se le asigna al nodo el nodo hijo
             // el primer nodo creado obtiene el valor de null
             // si el nodo hijo siguiente es null se parará el bucle
             nodo = nodo.vaciar;
 
             if (nodo.token == 116 && nodo.renglon == renglonFinal) {
-                System.out.println(nodo.lexema + "  Token: " + nodo.token);
+                //System.out.println(nodo.lexema + "  Token: " + nodo.token);
                 break;
             }
 

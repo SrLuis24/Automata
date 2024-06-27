@@ -69,6 +69,7 @@ public class Sintactico2 {
 
     private void program() {
         if (token == 200) {
+            symbolTable.addEntry(lexema, "Palabra reservada", 0, renglon);
             identificador();
             if (token == 118) {
                 bloque();
@@ -218,8 +219,37 @@ public class Sintactico2 {
         listaEnunciados();
     }
 
+    private void agregarTablaSimbolos(int token) {
+        if (token == 100) {
+            tipoDato = "String";
+        } else if (token == 101) {
+            tipoDato = "Int";
+        } else if (token == 102) {
+            tipoDato = "Real";
+        } else if (isOperador(token)) {
+            tipoDato = "Operador";
+        }
+        else {
+            tipoDato = "No se";
+        }
+
+        symbolTable.addEntry(lexema, tipoDato, 0, renglon);
+    }
+
+    private boolean isOperador(int token) {
+        Integer[] tokensOperadores = {103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 124};
+
+        for (int i = 0; i < tokensOperadores.length; i++) {
+            if (token == tokensOperadores[i]) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void operaciones() {
         if (token == 108 || token == 109 || token == 110 || token == 111 || token == 112 || token == 113) {
+
             nuevoToken();
             if (token == 100 || token == 101 || token == 102) {
                 nuevoToken();
@@ -242,19 +272,27 @@ public class Sintactico2 {
                 getError("numLetra");
             }
         } else if (token == 124) {
-            System.out.println(lexema + " " + token);
+            agregarTablaSimbolos(token);
             nuevoToken();
             if (token == 100 || token == 101 || token == 102) {
+
+                agregarTablaSimbolos(token); // Aqui se agrega a la tabla de simbolos junto con su tipo de dato.
+
                 nuevoToken();
                 if (token == 118) {
                     nuevoToken();
                 } else if (token == 103 || token == 104 || token == 105 || token == 106 || token == 107) {
+                    agregarTablaSimbolos(token);
+
                     nuevoToken();
                     if (token == 118) {
                         getError("numLetra");
                     }
                     while (token != 118) {
                         if (token == 100 || token == 101 || token == 102) {
+
+                            agregarTablaSimbolos(token);
+
                             nuevoToken();
                             if (token == 118) {
                                 break;
