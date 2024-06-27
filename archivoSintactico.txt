@@ -1,8 +1,8 @@
 program test;
-var a,b,c : integer;
+var a,b,c,a : integer;
 begin
-    z = 10;
-    x = x + w;
+    a = 10;
+    x = a + 2;
     y = 10;
     while
         x > y

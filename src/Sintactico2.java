@@ -1,3 +1,4 @@
+
 public class Sintactico2 {
 
     private String lexema;
@@ -9,7 +10,9 @@ public class Sintactico2 {
     private SymbolTable symbolTable;
     private String tipoDato;
 
+
     public Sintactico2(Nodo nodo) {
+
         this.nodo = nodo;
         lexema = nodo.lexema;
         token = nodo.token;
@@ -17,6 +20,38 @@ public class Sintactico2 {
 
         symbolTable = new SymbolTable();
         program();
+    }
+
+    private void getError(String error) {
+
+        switch (error)
+        {
+            case ".":
+                System.out.println("Se esperaba '.' al final del programa");
+                break;
+            case "cierre":
+                System.out.println("Se esperaba cierre de línea (Renglón " + renglon + ")");
+                break;
+            default:
+                System.out.println("Hay un error.");
+        }
+
+        /*
+        errores.put("program", "Se esperaba iniciar con 'program' (Renglón " + renglon + ")");
+        errores.put("end", "Se esperaba finalizar un end");
+        errores.put("identificador", "Se esperaba un identificador (Renglón " + renglon + ")");
+        errores.put("begin", "Se esperaba un begin (Renglón " + renglon + ")");
+        errores.put("tipoDato", "Se esperaba tipo de dato (Renglón " + renglon + ")");
+        errores.put(":", "Se esperaba ':' (Renglón " + renglon + ")");
+        errores.put("do", "Se esperaba 'do' (Renglón " + renglon + ")");
+        errores.put("numLetra", "Se esperaba un número o letra (Renglón " + renglon + ")");
+        errores.put("aritmetico", "Se esperaba un operador aritmético (Renglón " + renglon + ")");
+        errores.put("asignacion", "Se esperaba un operador de asignación (Renglón " + renglon + ")");
+        errores.put("then", "Se esperaba 'then' (Renglón " + renglon + ")");
+        errores.put("relacional", "Se esperaba un operador relacional (Renglón " + renglon + ")");
+        */
+
+        System.exit(0);
     }
 
     private void nuevoToken() {
@@ -38,10 +73,10 @@ public class Sintactico2 {
             if (token == 118) {
                 bloque();
                 if (nodo == null && token != 116) {
-                    System.out.println("Se esperaba '.' al final del programa");
+                    getError(".");
                 }
                 if (nodo == null && token == 116) {
-                    if (fin != 0) System.out.println("Se esperaba finalizar un end");
+                    if (fin != 0) getError("end");
                     else {
                         System.out.println("Perfecto");
                         System.out.println(lexema);
@@ -51,51 +86,49 @@ public class Sintactico2 {
                 if (nodo != null) {
                     nuevoToken();
                     if (token == 116) {
-                        if (fin != 0) System.out.println("Se esperaba un end");
+                        if (fin != 0) getError("end");
                         else {
                             System.out.println("Perfecto");
                             renglon = nodo.renglon;
                             return;
                         }
                     } else {
-                        System.out.println("Se esperaba '.' al final del programa");
+                        getError(".");
                     }
                 }
             } else {
-                System.out.println("Se esperaba cierre de línea (Renglón " + renglon + ")");
-                System.exit(0);
+                getError("cierre");
+
             }
         } else {
-            System.out.println("Se esperaba iniciar con 'program' (Renglón " + renglon + ")");
-            System.exit(0);
+            getError("program");
+
         }
     }
 
     private void identificador() {
         nuevoToken();
         if (token == 100) {
-            symbolTable.addEntry(lexema, tipoDato, 0);
+            symbolTable.addEntry(lexema, tipoDato, 0, renglon);
             nuevoToken();
             if (token == 117) {
                 listaIdentificador();
             }
         } else {
-            System.out.println("Se esperaba un identificador (Renglón " + renglon + ")");
-            System.exit(0);
+            getError("identificador");
         }
     }
 
     private void listaIdentificador() {
         nuevoToken();
         if (token == 100) {
-            symbolTable.addEntry(lexema, tipoDato, 0);
+            symbolTable.addEntry(lexema, tipoDato, 0, renglon);
             nuevoToken();
             if (token == 117) {
                 listaIdentificador();
             }
         } else {
-            System.out.println("Se esperaba un identificador (Renglón " + renglon + ")");
-            System.exit(0);
+            getError("identificador");
         }
     }
 
@@ -109,8 +142,7 @@ public class Sintactico2 {
             if (token == 205) {
                 bloqueEnunciados();
             } else {
-                System.out.println("Se esperaba un begin (Renglón " + renglon + ")");
-                System.exit(0);
+                getError("begin");
             }
         }
     }
@@ -121,11 +153,12 @@ public class Sintactico2 {
             nuevoToken();
             if (token == 202) {
                 tipoDato = "Integer";
+
                 nuevoToken();
                 if (token == 118) {
                     nuevoToken();
                 } else {
-                    System.out.println("Se esperaba cierre de la línea (Renglón " + renglon + ")");
+                    getError("cierre");
                 }
             } else if (token == 203) {
                 tipoDato = "Real";
@@ -134,13 +167,13 @@ public class Sintactico2 {
                 if (token == 118) {
                     nuevoToken();
                 } else {
-                    System.out.println("Se esperaba cierre de la línea (Renglón " + renglon + ")");
+                    getError("cierre");
                 }
             } else {
-                System.out.println("Se esperaba tipo de dato (Renglón " + renglon + ")");
+                getError("tipoDato");
             }
         } else {
-            System.out.println("Se esperaba ':' (Renglón " + renglon + ")");
+            getError(":");
         }
     }
 
@@ -171,15 +204,14 @@ public class Sintactico2 {
 
         if (token == 212) {
             tipoDato = "Palabra reservada";
-            symbolTable.addEntry(lexema, tipoDato, 0);
+            symbolTable.addEntry(lexema, tipoDato, 0, renglon);
 
             nuevoToken();
             condicion();
             if (token == 213) {
                 bloque();
             } else {
-                System.out.println("Se esperaba 'do' (Renglón " + renglon + ")");
-                System.exit(0);
+                getError("do");
             }
         }
 
@@ -198,22 +230,19 @@ public class Sintactico2 {
                         if (token == 118) {
                             nuevoToken();
                         } else {
-                            System.out.println("Se esperaba cierre de línea (Renglón " + renglon + ")");
-                            System.exit(0);
+                            getError("cierre");
                         }
                     } else {
-                        System.out.println("Se esperaba un número o letra (Renglón " + renglon + ")");
-                        System.exit(0);
+                        getError("numLetra");
                     }
                 } else {
-                    System.out.println("Se esperaba un operador aritmético (Renglón " + renglon + ")");
-                    System.exit(0);
+                    getError("aritmetico");
                 }
             } else {
-                System.out.println("Se esperaba un número o letra (Renglón " + renglon + ")");
-                System.exit(0);
+                getError("numLetra");
             }
         } else if (token == 124) {
+            System.out.println(lexema + " " + token);
             nuevoToken();
             if (token == 100 || token == 101 || token == 102) {
                 nuevoToken();
@@ -222,8 +251,7 @@ public class Sintactico2 {
                 } else if (token == 103 || token == 104 || token == 105 || token == 106 || token == 107) {
                     nuevoToken();
                     if (token == 118) {
-                        System.out.println("Se esperaba un número o letra (Renglón " + renglon + ")");
-                        System.exit(0);
+                        getError("numLetra");
                     }
                     while (token != 118) {
                         if (token == 100 || token == 101 || token == 102) {
@@ -234,38 +262,29 @@ public class Sintactico2 {
                             if (token == 103 || token == 104 || token == 105 || token == 106 || token == 107) {
                                 nuevoToken();
                                 if (token == 118) {
-                                    System.out.println("Se esperaba un número o letra (Renglón " + renglon + ")");
-                                    System.exit(0);
-                                    break;
+                                    getError("numLetra");
                                 }
                             } else {
                                 if (token == 100 || token == 101 || token == 102) {
-                                    System.out.println("Se esperaba un operador aritmético (Renglón " + renglon + ")");
-                                    System.exit(0);
+                                    getError("aritmetico");
                                 } else {
-                                    System.out.println("Se esperaba cierre de línea (Renglón " + renglon + ")");
-                                    System.exit(0);
+                                    getError("cierre");
                                 }
                                 break;
                             }
                         } else {
-                            System.out.println("Se esperaba un número o letra (Renglón " + renglon + ")");
-                            System.exit(0);
-                            break;
+                            getError("numLetra");
                         }
                     }
 
                 } else {
-                    System.out.println("Se esperaba cierre de línea (Renglón " + renglon + ")");
-                    System.exit(0);
+                    getError("cierre");
                 }
             } else {
-                System.out.println("Se esperaba un número o letra (Renglón " + renglon + ")");
-                System.exit(0);
+                getError("numLetra");
             }
         } else {
-            System.out.println("Se esperaba un operador de asignación (Renglón " + renglon + ")");
-            System.exit(0);
+            getError("asignacion");
         }
     }
 
@@ -276,8 +295,7 @@ public class Sintactico2 {
             nuevoToken();
             bloqueEnunciados();
         } else {
-            System.out.println("Se esperaba 'then' (Renglón " + renglon + ")");
-            System.exit(0);
+            getError("then");
         }
     }
 
@@ -291,8 +309,7 @@ public class Sintactico2 {
             fin++;
             listaEnunciados();
         } else {
-            System.out.println("Se esperaba un 'begin' (Renglón " + renglon + ")");
-            System.exit(0);
+            getError("begin");
         }
     }
 
@@ -304,16 +321,13 @@ public class Sintactico2 {
                 if (token == 100 || token == 101 || token == 102) {
                     nuevoToken();
                 } else {
-                    System.out.println("Se esperaba un número o letra (Renglón " + renglon + ")");
-                    System.exit(0);
+                    getError("numLetra");
                 }
             } else {
-                System.out.println("Se esperaba un operador relacional (Renglón " + renglon + ")");
-                System.exit(0);
+                getError("relacional");
             }
         } else {
-            System.out.println("Se esperaba un número o letra (Renglón " + renglon + ")");
-            System.exit(0);
+            getError("numLetra");
         }
     }
 

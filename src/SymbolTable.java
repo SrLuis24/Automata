@@ -1,32 +1,58 @@
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
 
 class SymbolTable {
-    private Map<String, SymbolTableEntry> table;
+    private ArrayList<SymbolTableEntry> tabla;
 
     public SymbolTable() {
-        table = new HashMap<>();
+        tabla = new ArrayList<>();
     }
 
-    public void addEntry(String name, String type, int scope) {
-        SymbolTableEntry entry = new SymbolTableEntry(name, type, scope);
-        table.put(name, entry);
+    public void addEntry(String name, String type, int scope, int renglon) {
+        SymbolTableEntry entrada = new SymbolTableEntry(name, type, scope, renglon);
+        tabla.add(entrada);
     }
+
+    public void addEntry(String name, String type, int scope, int renglon, String valor) {
+        SymbolTableEntry entrada = new SymbolTableEntry(name, type, scope, renglon, valor);
+        tabla.add(entrada);
+    }
+
+
 
     public SymbolTableEntry getEntry(String name) {
-        return table.get(name);
+
+        String entrada;
+        for (int i = 0; i < tabla.size(); i++) {
+            entrada = tabla.get(i).name;
+
+            if (entrada.equals(name)){
+                return tabla.get(i);
+            }
+        }
+        return null;
     }
 
     public boolean contains(String name) {
-        return table.containsKey(name);
+
+        String entrada;
+        for (int i = 0; i < tabla.size(); i++) {
+            entrada = tabla.get(i).name;
+
+            if (entrada.equals(name)){
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for (SymbolTableEntry entry : table.values()) {
+
+        tabla.forEach(entry -> {
             sb.append(entry.toString()).append("\n");
-        }
+        });
+
         return sb.toString();
     }
 }
