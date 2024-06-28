@@ -1,5 +1,6 @@
 program test;
-var a,b,c,a : integer;
+var a,b,c : real;
+var d : integer;
 begin
     a = 10;
     x = a + 2;

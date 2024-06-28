@@ -69,10 +69,10 @@ public class Sintactico2 {
 
     private void program() {
         if (token == 200) {
-            symbolTable.addEntry(lexema, "Palabra reservada", 0, renglon);
+            agregarTablaSimbolos(token);
             identificador();
             if (token == 118) {
-                agregarTablaSimbolos(token);
+                //agregarTablaSimbolos(token);
                 bloque();
                 if (nodo == null && token != 116) {
                     getError(".");
@@ -112,10 +112,26 @@ public class Sintactico2 {
     private void identificador() {
         nuevoToken();
         if (token == 100) {
-            symbolTable.addEntry(lexema, tipoDato, 0, renglon);
+            agregarTablaSimbolos(token);
             nuevoToken();
             if (token == 117) {
                 listaIdentificador();
+            }
+        } else {
+            getError("identificador");
+        }
+    }
+
+    private void listaIdentificadorDeclaraciones(TreeNode declaraciones) {
+        nuevoToken();
+
+        if (token == 100) {
+            declaraciones.addChild(new TreeNode(lexema, lexema));
+
+            nuevoToken();
+            if (token == 117) {
+
+                listaIdentificadorDeclaraciones(declaraciones);
             }
         } else {
             getError("identificador");
@@ -128,8 +144,7 @@ public class Sintactico2 {
             agregarTablaSimbolos(token);
             nuevoToken();
             if (token == 117) {
-                agregarTablaSimbolos(token);
-
+                //agregarTablaSimbolos(token);
                 listaIdentificador();
             }
         } else {
@@ -140,10 +155,13 @@ public class Sintactico2 {
     private void bloque() {
         nuevoToken();
         if (nodo != null) {
-            if (token == 221) {
-                agregarTablaSimbolos(token);
-                definiciones();
+            while (token == 221) {
+                if (token == 221) {
+                    agregarTablaSimbolos(token);
+                    definiciones();
+                }
             }
+
 
             if (token == 205) {
 
@@ -154,29 +172,58 @@ public class Sintactico2 {
         }
     }
 
+    private void printTree(TreeNode node, String indent) {
+        if (node != null) {
+            System.out.println(indent + node.value);
+            for (TreeNode child : node.children) {
+                printTree(child, indent + "  ");
+            }
+        }
+    }
+
+    private void agregarDeclaracion(TreeNode nodo) {
+        if  (nodo != null) {
+            for (TreeNode child: nodo.children) {
+                if (symbolTable.contains(child.lexema)) {
+                    System.out.println(child.lexema + " ya está declarado. (Renglón " + renglon + ")");
+                    System.exit(0);
+                }
+                symbolTable.addEntry(child.lexema, tipoDato, 0, renglon);
+            }
+        }
+    }
+
     private void definiciones() {
-        listaIdentificador();
+        TreeNode declaraciones = new TreeNode("declaraciones", lexema);
+        
+        listaIdentificadorDeclaraciones(declaraciones);
+
+        printTree(declaraciones, "");
+
         if (token == 119) {
             agregarTablaSimbolos(token);
             nuevoToken();
             if (token == 202) {
-                agregarTablaSimbolos(token);
                 tipoDato = "Integer";
+                agregarDeclaracion(declaraciones);
+                agregarTablaSimbolos(token);
 
                 nuevoToken();
                 if (token == 118) {
-                    agregarTablaSimbolos(token);
+                    //agregarTablaSimbolos(token);
                     nuevoToken();
                 } else {
                     getError("cierre");
                 }
             } else if (token == 203) {
-                agregarTablaSimbolos(token);
                 tipoDato = "Real";
+                agregarDeclaracion(declaraciones);
+                agregarTablaSimbolos(token);
+
                 nuevoToken();
 
                 if (token == 118) {
-                    agregarTablaSimbolos(token);
+                    //agregarTablaSimbolos(token);
                     nuevoToken();
                 } else {
                     getError("cierre");
@@ -285,7 +332,7 @@ public class Sintactico2 {
                         agregarTablaSimbolos(token);
                         nuevoToken();
                         if (token == 118) {
-                            agregarTablaSimbolos(token);
+                            //agregarTablaSimbolos(token);
                             nuevoToken();
                         } else {
                             getError("cierre");
@@ -307,7 +354,7 @@ public class Sintactico2 {
                 agregarTablaSimbolos(token); // Aqui se agrega a la tabla de simbolos junto con su tipo de dato.
                 nuevoToken();
                 if (token == 118) {
-                    agregarTablaSimbolos(token);
+                    //agregarTablaSimbolos(token);
                     nuevoToken();
                 } else if (token == 103 || token == 104 || token == 105 || token == 106 || token == 107) {
                     agregarTablaSimbolos(token);
@@ -323,7 +370,7 @@ public class Sintactico2 {
 
                             nuevoToken();
                             if (token == 118) {
-                                agregarTablaSimbolos(token);
+                                //agregarTablaSimbolos(token);
                                 break;
                             }
                             if (token == 103 || token == 104 || token == 105 || token == 106 || token == 107) {
