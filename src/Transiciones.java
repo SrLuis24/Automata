@@ -42,7 +42,9 @@ public class Transiciones {
             {"none", "218"},
             {"dimension", "219"},
             {"print", "220"},
-            {"var", "221"}
+            {"var", "221"},
+            {"true", "222"},
+            {"false", "223"}
     };
 
     private final String[][] errores = {

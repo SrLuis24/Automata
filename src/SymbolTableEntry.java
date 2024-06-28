@@ -22,6 +22,6 @@ class SymbolTableEntry {
 
     @Override
     public String toString() {
-        return "Nombre: " + name + ", Tipo: " + type + ", Alcance: " + scope + ", Renglón: " + renglon;
+        return "Nombre: " + name + ", Tipo: " + type + ", Alcance: " + scope + ", Renglón: " + renglon + ", Valor: " + valor;
     }
 }

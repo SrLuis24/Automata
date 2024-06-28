@@ -17,8 +17,6 @@ class SymbolTable {
         tabla.add(entrada);
     }
 
-
-
     public SymbolTableEntry getEntry(String name) {
 
         String entrada;

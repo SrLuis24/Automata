@@ -30,26 +30,50 @@ public class Sintactico2 {
                 System.out.println("Se esperaba '.' al final del programa");
                 break;
             case "cierre":
-                System.out.println("Se esperaba cierre de línea (Renglón " + renglon + ")");
+                System.out.println("Se esperaba cierre de línea. (Renglón " + renglon + ")");
+                break;
+            case "numAsig":
+                System.out.println("No se puede asignar un valor a un número. (Renglón " + renglon + ")");
+                break;
+            case "program":
+                System.out.println("Se esperaba iniciar con 'program' (Renglón " + renglon + ")");
+                break;
+            case "end":
+                System.out.println("Se esperaba finalizar un end");
+                break;
+            case "identificador":
+                System.out.println("Se esperaba un identificador (Renglón " + renglon + ")");
+                break;
+            case "begin":
+                System.out.println("Se esperaba un begin (Renglón " + renglon + ")");
+                break;
+            case "tipoDato":
+                System.out.println("Se esperaba tipo de dato (Renglón " + renglon + ")");
+                break;
+            case ":":
+                System.out.println("Se esperaba ':' (Renglón " + renglon + ")");
+                break;
+            case "do":
+                System.out.println("Se esperaba 'do' (Renglón " + renglon + ")");
+                break;
+            case "numLetra":
+                System.out.println("Se esperaba un número o letra (Renglón " + renglon + ")");
+                break;
+            case "aritmetico":
+                System.out.println("Se esperaba un operador aritmético (Renglón " + renglon + ")");
+                break;
+            case "asignacion":
+                System.out.println("Se esperaba un operador de asignación (Renglón " + renglon + ")");
+                break;
+            case "then":
+                System.out.println("Se esperaba 'then' (Renglón " + renglon + ")");
+                break;
+            case "relacional":
+                System.out.println("Se esperaba un operador relacional (Renglón " + renglon + ")");
                 break;
             default:
                 System.out.println("Hay un error.");
         }
-
-        /*
-        errores.put("program", "Se esperaba iniciar con 'program' (Renglón " + renglon + ")");
-        errores.put("end", "Se esperaba finalizar un end");
-        errores.put("identificador", "Se esperaba un identificador (Renglón " + renglon + ")");
-        errores.put("begin", "Se esperaba un begin (Renglón " + renglon + ")");
-        errores.put("tipoDato", "Se esperaba tipo de dato (Renglón " + renglon + ")");
-        errores.put(":", "Se esperaba ':' (Renglón " + renglon + ")");
-        errores.put("do", "Se esperaba 'do' (Renglón " + renglon + ")");
-        errores.put("numLetra", "Se esperaba un número o letra (Renglón " + renglon + ")");
-        errores.put("aritmetico", "Se esperaba un operador aritmético (Renglón " + renglon + ")");
-        errores.put("asignacion", "Se esperaba un operador de asignación (Renglón " + renglon + ")");
-        errores.put("then", "Se esperaba 'then' (Renglón " + renglon + ")");
-        errores.put("relacional", "Se esperaba un operador relacional (Renglón " + renglon + ")");
-        */
 
         System.exit(0);
     }
@@ -112,7 +136,7 @@ public class Sintactico2 {
     private void identificador() {
         nuevoToken();
         if (token == 100) {
-            agregarTablaSimbolos(token);
+            symbolTable.addEntry(lexema, "Reservada", 0, renglon);
             nuevoToken();
             if (token == 117) {
                 listaIdentificador();
@@ -174,7 +198,7 @@ public class Sintactico2 {
 
     private void printTree(TreeNode node, String indent) {
         if (node != null) {
-            System.out.println(indent + node.value);
+            //System.out.println(indent + node.value);
             for (TreeNode child : node.children) {
                 printTree(child, indent + "  ");
             }
@@ -204,7 +228,7 @@ public class Sintactico2 {
             agregarTablaSimbolos(token);
             nuevoToken();
             if (token == 202) {
-                tipoDato = "Integer";
+                tipoDato = "Int";
                 agregarDeclaracion(declaraciones);
                 agregarTablaSimbolos(token);
 
@@ -228,7 +252,35 @@ public class Sintactico2 {
                 } else {
                     getError("cierre");
                 }
-            } else {
+            } else if (token == 201) {
+                tipoDato = "Character";
+                agregarDeclaracion(declaraciones);
+                agregarTablaSimbolos(token);
+
+                nuevoToken();
+
+                if (token == 118) {
+                    //agregarTablaSimbolos(token);
+                    nuevoToken();
+                } else {
+                    getError("cierre");
+                }
+            } else if (token == 204) {
+                tipoDato = "Boolean";
+                agregarDeclaracion(declaraciones);
+                agregarTablaSimbolos(token);
+
+                nuevoToken();
+
+                if (token == 118) {
+                    //agregarTablaSimbolos(token);
+                    nuevoToken();
+                } else {
+                    getError("cierre");
+                }
+            }
+
+            else {
                 getError("tipoDato");
             }
         } else {
@@ -278,13 +330,32 @@ public class Sintactico2 {
             }
         }
 
+        otro();
+
         listaEnunciados();
+    }
+
+    private void otro() {
+        if (token == 101 || token == 102) {
+            System.out.println(lexema);
+            getError("numAsig");
+            System.exit(0);
+        }
+        if (isOperador(token)) {
+            getError("identificador");
+            System.exit(0);
+        }
     }
 
     private void agregarTablaSimbolos(int token) {
 
+        if (!symbolTable.contains(lexema) && (token == 100)) {
+            System.out.println(lexema + " no está declarado. (Renglón " + renglon + ")");
+            System.exit(0);
+        }
+
         if (token == 100) {
-            tipoDato = "String";
+            tipoDato = symbolTable.getEntry(lexema).type;
         } else if (token == 101) {
             tipoDato = "Int";
         } else if (token == 102) {
@@ -295,8 +366,9 @@ public class Sintactico2 {
             tipoDato = "Simbolo";
         } else if (token == 119) {
             tipoDato = "Asignación";
-        }
-        else if (token >= 200) {
+        } else if (token == 222 || token == 223) {
+            tipoDato = "Boolean";
+        } else if (token >= 200) {
             tipoDato = "Palabra reservada";
         }
         else {
@@ -318,6 +390,7 @@ public class Sintactico2 {
     }
 
     private void operaciones() {
+
         if (token == 108 || token == 109 || token == 110 || token == 111 || token == 112 || token == 113) {
             agregarTablaSimbolos(token);
 
@@ -431,14 +504,33 @@ public class Sintactico2 {
     }
 
     private void condicion() {
+        TreeNode condiciones = new TreeNode("condiciones", "");
         if (token == 100 || token == 101 || token == 102) {
             agregarTablaSimbolos(token);
+
+            condiciones.addChild(new TreeNode(lexema, lexema));
+
             nuevoToken();
             if (token == 108 || token == 109 || token == 110 || token == 111 || token == 112 || token == 113) {
                 agregarTablaSimbolos(token);
+                condiciones.addChild(new TreeNode(lexema, lexema));
+
                 nuevoToken();
                 if (token == 100 || token == 101 || token == 102) {
                     agregarTablaSimbolos(token);
+                    condiciones.addChild(new TreeNode(lexema, lexema));
+
+                    mismoTipo(condiciones);
+
+                    printTree(condiciones, "");
+                    nuevoToken();
+                } else if (token == 222 || token == 223) {
+                    agregarTablaSimbolos(token);
+                    condiciones.addChild(new TreeNode(lexema, lexema));
+
+                    mismoTipo(condiciones);
+
+                    printTree(condiciones, "");
                     nuevoToken();
                 } else {
                     getError("numLetra");
@@ -448,6 +540,33 @@ public class Sintactico2 {
             }
         } else {
             getError("numLetra");
+        }
+    }
+
+    private void mismoTipo(TreeNode nodo) {
+        if  (nodo != null) {
+
+            String prmLexema = nodo.children.get(0).lexema;
+            String operador = nodo.children.get(1).lexema;
+            String segLexema = nodo.children.get(2).lexema;
+
+            String primerTipo = symbolTable.getEntry(prmLexema).type;
+            String segundoTipo = symbolTable.getEntry(segLexema).type;
+
+            //System.out.println("Condicion -> " + prmLexema + " " + primerTipo);
+            //System.out.println("Condicion -> " + segLexema + " " + segundoTipo);
+
+            if (!primerTipo.equalsIgnoreCase(segundoTipo)) {
+                System.out.println("No son del mismo tipo: '" + prmLexema + "' y '" + segLexema + "'" );
+                System.exit(0);
+            }
+
+            if (primerTipo.equalsIgnoreCase("Boolean")) {
+                if (!(operador.equals("==") || operador.equals("!="))) {
+                    System.out.println("No puedes usar este tipo de operador para Boolean");
+                    System.exit(0);
+                }
+            }
         }
     }
 

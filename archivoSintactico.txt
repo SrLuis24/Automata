@@ -1,16 +1,16 @@
 program test;
-var a,b,c : real;
-var d : integer;
+var a,b,c,x,y : real;
+var d,r : boolean;
 begin
-    a = 10;
-    x = a + 2;
+    b = 10;
+    x = r + 2;
     y = 10;
     while
         x > y
     do
     begin
-        y = 1 + 1;
-        if x > 1 then
+        x = 1 + 1;
+        if r == true then
         begin
             a = 2;
         end
