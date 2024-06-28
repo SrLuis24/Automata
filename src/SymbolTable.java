@@ -7,13 +7,13 @@ class SymbolTable {
         tabla = new ArrayList<>();
     }
 
-    public void addEntry(String name, String type, int scope, int renglon) {
-        SymbolTableEntry entrada = new SymbolTableEntry(name, type, scope, renglon);
+    public void addEntry(String name, String type, int token, int renglon) {
+        SymbolTableEntry entrada = new SymbolTableEntry(name, type, token, renglon);
         tabla.add(entrada);
     }
 
-    public void addEntry(String name, String type, int scope, int renglon, String valor) {
-        SymbolTableEntry entrada = new SymbolTableEntry(name, type, scope, renglon, valor);
+    public void addEntry(String name, String type, int token, int renglon, String valor) {
+        SymbolTableEntry entrada = new SymbolTableEntry(name, type, token, renglon, valor);
         tabla.add(entrada);
     }
 

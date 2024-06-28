@@ -2,7 +2,7 @@ program test;
 var a,b,c,x,y : real;
 var d,r : boolean;
 begin
-    b = 10;
+    a = a;
     x = r + 2;
     y = 10;
     while

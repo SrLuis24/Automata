@@ -105,7 +105,6 @@ public class Sintactico2 {
                     if (fin != 0) getError("end");
                     else {
                         System.out.println("Perfecto");
-                        System.out.println(lexema);
                         return;
                     }
                 }
@@ -136,7 +135,7 @@ public class Sintactico2 {
     private void identificador() {
         nuevoToken();
         if (token == 100) {
-            symbolTable.addEntry(lexema, "Reservada", 0, renglon);
+            symbolTable.addEntry(lexema, "Palabra Reservada", token, renglon);
             nuevoToken();
             if (token == 117) {
                 listaIdentificador();
@@ -212,7 +211,7 @@ public class Sintactico2 {
                     System.out.println(child.lexema + " ya está declarado. (Renglón " + renglon + ")");
                     System.exit(0);
                 }
-                symbolTable.addEntry(child.lexema, tipoDato, 0, renglon);
+                symbolTable.addEntry(child.lexema, tipoDato, token, renglon);
             }
         }
     }
@@ -296,6 +295,7 @@ public class Sintactico2 {
         nuevoToken();
         if (token == 100) {
             while (token == 100) {
+
                 agregarTablaSimbolos(token);
                 nuevoToken();
                 operaciones();
@@ -337,7 +337,6 @@ public class Sintactico2 {
 
     private void otro() {
         if (token == 101 || token == 102) {
-            System.out.println(lexema);
             getError("numAsig");
             System.exit(0);
         }
@@ -355,6 +354,10 @@ public class Sintactico2 {
         }
 
         if (token == 100) {
+            if (symbolTable.getEntry(lexema).type.equalsIgnoreCase("Palabra Reservada")) {
+                System.out.println("No puedes usar el nombre del programa");
+                System.exit(0);
+            }
             tipoDato = symbolTable.getEntry(lexema).type;
         } else if (token == 101) {
             tipoDato = "Int";
@@ -372,10 +375,10 @@ public class Sintactico2 {
             tipoDato = "Palabra reservada";
         }
         else {
-            tipoDato = "No se";
+            tipoDato = "Undefined";
         }
 
-        symbolTable.addEntry(lexema, tipoDato, 0, renglon);
+        symbolTable.addEntry(lexema, tipoDato, token, renglon);
     }
 
     private boolean isOperador(int token) {
