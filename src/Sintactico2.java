@@ -1,3 +1,6 @@
+import javax.jws.soap.SOAPBinding;
+import java.util.Collections;
+import java.util.List;
 
 public class Sintactico2 {
 
@@ -287,6 +290,147 @@ public class Sintactico2 {
         }
     }
 
+    private void agregarDefTabla(TreeNode nodo) {
+
+        String lexema = nodo.lexema;
+        List<TreeNode> valorNodo = nodo.children;
+        List<String> valores = Collections.singletonList(nodo.children.toString());
+
+        if (nodo.token == 100) {
+
+            if (symbolTable.getEntry(nodo.lexema).type.equalsIgnoreCase("Palabra Reservada")) {
+                System.out.println("No puedes usar el nombre del programa");
+                System.exit(0);
+            }
+        }
+
+        if (valores.get(0).equals("=")) {
+            valores.remove(0);
+        }
+
+        // Construir la expresión concatenada
+        StringBuilder resultado = new StringBuilder();
+        for (String val : valores) {
+            resultado.append(val).append(" ");
+        }
+        String rFinal = resultado.toString().replaceAll("[,=\\[\\]]", "").trim();
+
+        // Eliminar el último espacio en blanco
+        if (resultado.length() > 0) {
+            resultado.setLength(resultado.length() - 1);
+        }
+
+        String valor = "";
+        int tokenValor = 0;
+        String valorPrev = "";
+        int tokenValorPrev = 0;
+
+        for (int i = 0; i < nodo.children.size(); i++) {
+            if (nodo.children.get(i).token == 100 || nodo.children.get(i).token == 101 || nodo.children.get(i).token == 102) {
+                // Si el valor es vacío, inicializarlo
+                if (valor.equals("")) {
+                    valor = nodo.children.get(i).lexema;
+                    tokenValor = nodo.children.get(i).token;
+
+                    if (tokenValor == 100) {
+
+                        if (symbolTable.getEntry(valor).type.equalsIgnoreCase("Palabra Reservada")) {
+                            System.out.println("No puedes usar el nombre del programa");
+                            System.exit(0);
+                        }
+                    }
+
+                    // Comprobar si la misma variable se asigna a sí misma
+                    if (valor.equals(lexema) && nodo.children.size() == 2) {
+                        System.out.println("No puedes asignar la misma variable");
+                        System.exit(0);
+                    }
+                } else {
+                    // Actualizar el valor previo y el valor actual
+                    valorPrev = valor;
+                    tokenValorPrev = tokenValor;
+                    valor = nodo.children.get(i).lexema;
+                    tokenValor = nodo.children.get(i).token;
+
+
+                    // Verificar si el lexema está en la tabla de símbolos
+                    if (!symbolTable.contains(valor) && nodo.children.get(i).token == 100) {
+                        System.out.println(valor + " no está declarado. (Renglón " + renglon + ")");
+                        System.exit(0);
+                    }
+
+                    if (!symbolTable.contains(valorPrev) && tokenValorPrev == 100) {
+                        System.out.println(valorPrev + " no está declarado. (Renglón " + renglon + ") k");
+                        System.exit(0);
+                    }
+
+                    if (tokenValor == 100 || tokenValorPrev == 100) {
+
+                        if (tokenValor == 100) {
+
+                            if (symbolTable.getEntry(valor).type.equalsIgnoreCase("Palabra Reservada")) {
+                                System.out.println("No puedes usar el nombre del programa");
+                                System.exit(0);
+                            }
+                        } else if (tokenValorPrev == 100 ) {
+
+                            if (symbolTable.getEntry(valorPrev).type.equalsIgnoreCase("Palabra Reservada")) {
+                                System.out.println("No puedes usar el nombre del programa ");
+                                System.exit(0);
+                            }
+                        }
+
+                    }
+
+                    if (tokenValor == 101 || tokenValorPrev == 101) {
+                        String tipo = "Int";
+
+                        if (tokenValor == 101 && tokenValorPrev == 100) {
+                            if (!(symbolTable.getEntry(valorPrev).type.equals(tipo))) {
+                                System.out.println("No son del mismo tipo: '" + valor + "' y '" + valorPrev + "' (Renglón " + renglon + ")" );
+                                System.exit(0);
+                            }
+                        } else if (tokenValor == 100 && tokenValorPrev == 101) {
+                            if (!(symbolTable.getEntry(valor).type.equals(tipo))) {
+                                System.out.println("No son del mismo tipo: '" + valor + "' y '" + valorPrev + "' (Renglón " + renglon + ")" );
+                                System.exit(0);
+                            }
+                        }
+
+                    } else if (tokenValor == 102 || tokenValorPrev == 102) {
+                        String tipo = "Real";
+
+                        if (tokenValor == 102 && tokenValorPrev == 100) {
+                            if (!(symbolTable.getEntry(valorPrev).type.equals(tipo))) {
+                                System.out.println("No son del mismo tipo: '" + valor + "' y '" + valorPrev + "' (Renglón " + renglon + ")" );
+                                System.exit(0);
+                            }
+                        } else if (tokenValor == 100 && tokenValorPrev == 102) {
+                            if (!(symbolTable.getEntry(valor).type.equals(tipo))) {
+                                System.out.println("No son del mismo tipo: '" + valor + "' y '" + valorPrev + "' (Renglón " + renglon + ")" );
+                                System.exit(0);
+                            }
+                        }
+                    } else if (tokenValor == 100 && tokenValorPrev == 100) {
+
+                        if (!(symbolTable.getEntry(valor).type.equals(symbolTable.getEntry(valorPrev).type))) {
+                            System.out.println("No son del mismo tipo: '" + valor + "' y '" + valorPrev + "' (Renglón " + renglon + ")" );
+                            System.exit(0);
+                        }
+                    }
+                }
+            }
+        }
+
+
+
+        symbolTable.addEntry(lexema, "a", nodo.token, renglon, rFinal);
+
+        for (int i = 0; i < nodo.children.size(); i++) {
+            agregarTablaSimbolos(nodo.children.get(i).token, nodo.children.get(i).lexema);
+        }
+    }
+
     private void listaEnunciados() {
         if (nodo == null) {
             return;
@@ -295,10 +439,14 @@ public class Sintactico2 {
         nuevoToken();
         if (token == 100) {
             while (token == 100) {
-
-                agregarTablaSimbolos(token);
+                TreeNode asignacion = new TreeNode(lexema, lexema, token);
+                //agregarTablaSimbolos(token);
                 nuevoToken();
-                operaciones();
+                operaciones(asignacion);
+
+                agregarDefTabla(asignacion);
+
+                printTree(asignacion, "");
             }
         }
 
@@ -381,6 +529,41 @@ public class Sintactico2 {
         symbolTable.addEntry(lexema, tipoDato, token, renglon);
     }
 
+    private void agregarTablaSimbolos(int token, String lexema) {
+
+        if (!symbolTable.contains(lexema) && (token == 100)) {
+            System.out.println(lexema + " no está declarado. (Renglón " + renglon + ")");
+            System.exit(0);
+        }
+
+        if (token == 100) {
+            if (symbolTable.getEntry(lexema).type.equalsIgnoreCase("Palabra Reservada")) {
+                System.out.println("No puedes usar el nombre del programa");
+                System.exit(0);
+            }
+            tipoDato = symbolTable.getEntry(lexema).type;
+        } else if (token == 101) {
+            tipoDato = "Int";
+        } else if (token == 102) {
+            tipoDato = "Real";
+        } else if (isOperador(token)) {
+            tipoDato = "Operador";
+        } else if (token == 114 || token == 115 || token == 116 || token == 117 || token == 118) {
+            tipoDato = "Simbolo";
+        } else if (token == 119) {
+            tipoDato = "Asignación";
+        } else if (token == 222 || token == 223) {
+            tipoDato = "Boolean";
+        } else if (token >= 200) {
+            tipoDato = "Palabra reservada";
+        }
+        else {
+            tipoDato = "Undefined";
+        }
+
+        symbolTable.addEntry(lexema, tipoDato, token, renglon);
+    }
+
     private boolean isOperador(int token) {
         Integer[] tokensOperadores = {103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 124};
 
@@ -392,7 +575,7 @@ public class Sintactico2 {
         return false;
     }
 
-    private void operaciones() {
+    private void operaciones(TreeNode nodo) {
 
         if (token == 108 || token == 109 || token == 110 || token == 111 || token == 112 || token == 113) {
             agregarTablaSimbolos(token);
@@ -423,17 +606,20 @@ public class Sintactico2 {
                 getError("numLetra");
             }
         } else if (token == 124) {
-            agregarTablaSimbolos(token);
+            //agregarTablaSimbolos(token);
+            nodo.addChild(new TreeNode(lexema, lexema, token));
             nuevoToken();
 
             if (token == 100 || token == 101 || token == 102) {
-                agregarTablaSimbolos(token); // Aqui se agrega a la tabla de simbolos junto con su tipo de dato.
+                nodo.addChild(new TreeNode(lexema, lexema, token));
+                //agregarTablaSimbolos(token); // Aqui se agrega a la tabla de simbolos junto con su tipo de dato.
                 nuevoToken();
                 if (token == 118) {
                     //agregarTablaSimbolos(token);
                     nuevoToken();
                 } else if (token == 103 || token == 104 || token == 105 || token == 106 || token == 107) {
-                    agregarTablaSimbolos(token);
+                    //agregarTablaSimbolos(token);
+                    nodo.addChild(new TreeNode(lexema, lexema, token));
 
                     nuevoToken();
                     if (token == 118) {
@@ -442,7 +628,8 @@ public class Sintactico2 {
                     while (token != 118) {
                         if (token == 100 || token == 101 || token == 102) {
 
-                            agregarTablaSimbolos(token);
+                            //agregarTablaSimbolos(token);
+                            nodo.addChild(new TreeNode(lexema, lexema, token));
 
                             nuevoToken();
                             if (token == 118) {
@@ -450,7 +637,8 @@ public class Sintactico2 {
                                 break;
                             }
                             if (token == 103 || token == 104 || token == 105 || token == 106 || token == 107) {
-                                agregarTablaSimbolos(token);
+                                //agregarTablaSimbolos(token);
+                                nodo.addChild(new TreeNode(lexema, lexema, token));
                                 nuevoToken();
                                 if (token == 118) {
                                     getError("numLetra");
