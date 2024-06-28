@@ -9,5 +9,9 @@ begin
     do
     begin
         y = 1 + 1;
+        if x > 1 then
+        begin
+            a = 2;
+        end
     end
 end.

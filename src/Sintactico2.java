@@ -72,6 +72,7 @@ public class Sintactico2 {
             symbolTable.addEntry(lexema, "Palabra reservada", 0, renglon);
             identificador();
             if (token == 118) {
+                agregarTablaSimbolos(token);
                 bloque();
                 if (nodo == null && token != 116) {
                     getError(".");
@@ -89,6 +90,7 @@ public class Sintactico2 {
                     if (token == 116) {
                         if (fin != 0) getError("end");
                         else {
+                            agregarTablaSimbolos(token);
                             System.out.println("Perfecto");
                             renglon = nodo.renglon;
                             return;
@@ -123,9 +125,11 @@ public class Sintactico2 {
     private void listaIdentificador() {
         nuevoToken();
         if (token == 100) {
-            symbolTable.addEntry(lexema, tipoDato, 0, renglon);
+            agregarTablaSimbolos(token);
             nuevoToken();
             if (token == 117) {
+                agregarTablaSimbolos(token);
+
                 listaIdentificador();
             }
         } else {
@@ -137,10 +141,12 @@ public class Sintactico2 {
         nuevoToken();
         if (nodo != null) {
             if (token == 221) {
+                agregarTablaSimbolos(token);
                 definiciones();
             }
 
             if (token == 205) {
+
                 bloqueEnunciados();
             } else {
                 getError("begin");
@@ -151,21 +157,26 @@ public class Sintactico2 {
     private void definiciones() {
         listaIdentificador();
         if (token == 119) {
+            agregarTablaSimbolos(token);
             nuevoToken();
             if (token == 202) {
+                agregarTablaSimbolos(token);
                 tipoDato = "Integer";
 
                 nuevoToken();
                 if (token == 118) {
+                    agregarTablaSimbolos(token);
                     nuevoToken();
                 } else {
                     getError("cierre");
                 }
             } else if (token == 203) {
+                agregarTablaSimbolos(token);
                 tipoDato = "Real";
                 nuevoToken();
 
                 if (token == 118) {
+                    agregarTablaSimbolos(token);
                     nuevoToken();
                 } else {
                     getError("cierre");
@@ -186,30 +197,34 @@ public class Sintactico2 {
         nuevoToken();
         if (token == 100) {
             while (token == 100) {
+                agregarTablaSimbolos(token);
                 nuevoToken();
                 operaciones();
             }
         }
 
         if (token == 206) {
+            agregarTablaSimbolos(token);
             fin--;
             return;
         }
 
         if (token == 209) {
+            agregarTablaSimbolos(token);
             alternativas();
             if (token == 211) {
+                agregarTablaSimbolos(token);
                 alternativasElse();
             }
         }
 
         if (token == 212) {
-            tipoDato = "Palabra reservada";
-            symbolTable.addEntry(lexema, tipoDato, 0, renglon);
+            agregarTablaSimbolos(token);
 
             nuevoToken();
             condicion();
             if (token == 213) {
+                agregarTablaSimbolos(token);
                 bloque();
             } else {
                 getError("do");
@@ -220,6 +235,7 @@ public class Sintactico2 {
     }
 
     private void agregarTablaSimbolos(int token) {
+
         if (token == 100) {
             tipoDato = "String";
         } else if (token == 101) {
@@ -228,6 +244,13 @@ public class Sintactico2 {
             tipoDato = "Real";
         } else if (isOperador(token)) {
             tipoDato = "Operador";
+        } else if (token == 114 || token == 115 || token == 116 || token == 117 || token == 118) {
+            tipoDato = "Simbolo";
+        } else if (token == 119) {
+            tipoDato = "Asignación";
+        }
+        else if (token >= 200) {
+            tipoDato = "Palabra reservada";
         }
         else {
             tipoDato = "No se";
@@ -249,15 +272,20 @@ public class Sintactico2 {
 
     private void operaciones() {
         if (token == 108 || token == 109 || token == 110 || token == 111 || token == 112 || token == 113) {
+            agregarTablaSimbolos(token);
 
             nuevoToken();
             if (token == 100 || token == 101 || token == 102) {
+                agregarTablaSimbolos(token);
                 nuevoToken();
                 if (token == 103 || token == 104 || token == 105 || token == 106 || token == 107) {
+                    agregarTablaSimbolos(token);
                     nuevoToken();
                     if (token == 100 || token == 101 || token == 102) {
+                        agregarTablaSimbolos(token);
                         nuevoToken();
                         if (token == 118) {
+                            agregarTablaSimbolos(token);
                             nuevoToken();
                         } else {
                             getError("cierre");
@@ -274,12 +302,12 @@ public class Sintactico2 {
         } else if (token == 124) {
             agregarTablaSimbolos(token);
             nuevoToken();
+
             if (token == 100 || token == 101 || token == 102) {
-
                 agregarTablaSimbolos(token); // Aqui se agrega a la tabla de simbolos junto con su tipo de dato.
-
                 nuevoToken();
                 if (token == 118) {
+                    agregarTablaSimbolos(token);
                     nuevoToken();
                 } else if (token == 103 || token == 104 || token == 105 || token == 106 || token == 107) {
                     agregarTablaSimbolos(token);
@@ -295,9 +323,11 @@ public class Sintactico2 {
 
                             nuevoToken();
                             if (token == 118) {
+                                agregarTablaSimbolos(token);
                                 break;
                             }
                             if (token == 103 || token == 104 || token == 105 || token == 106 || token == 107) {
+                                agregarTablaSimbolos(token);
                                 nuevoToken();
                                 if (token == 118) {
                                     getError("numLetra");
@@ -330,6 +360,7 @@ public class Sintactico2 {
         nuevoToken();
         condicion();
         if (token == 210) {
+            agregarTablaSimbolos(token);
             nuevoToken();
             bloqueEnunciados();
         } else {
@@ -344,6 +375,7 @@ public class Sintactico2 {
 
     private void bloqueEnunciados() {
         if (token == 205) {
+            agregarTablaSimbolos(token);
             fin++;
             listaEnunciados();
         } else {
@@ -353,10 +385,13 @@ public class Sintactico2 {
 
     private void condicion() {
         if (token == 100 || token == 101 || token == 102) {
+            agregarTablaSimbolos(token);
             nuevoToken();
             if (token == 108 || token == 109 || token == 110 || token == 111 || token == 112 || token == 113) {
+                agregarTablaSimbolos(token);
                 nuevoToken();
                 if (token == 100 || token == 101 || token == 102) {
+                    agregarTablaSimbolos(token);
                     nuevoToken();
                 } else {
                     getError("numLetra");
