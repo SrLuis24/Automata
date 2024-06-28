@@ -1,18 +1,18 @@
 program test;
-var a,b,c,x,y : real;
-var d,r : integer;
+var a,b,c,y : real;
+var d,r,x : integer;
 begin
-    a = b * c;
-    x = r / d;
-    y = 10;
+    r = b * c;
+    x = 1;
+    y = 10.1;
     while
-        x > y
+        x > r
     do
     begin
         x = 1 + 1;
-        if r = 2 then
+        if r == 2 then
         begin
-            a = 2;
+            a = 2.2;
         end
     end
 end.

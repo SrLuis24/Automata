@@ -295,6 +295,7 @@ public class Sintactico2 {
         String lexema = nodo.lexema;
         List<TreeNode> valorNodo = nodo.children;
         List<String> valores = Collections.singletonList(nodo.children.toString());
+        String type = symbolTable.getEntry(nodo.lexema).type;
 
         if (nodo.token == 100) {
 
@@ -332,8 +333,12 @@ public class Sintactico2 {
                     valor = nodo.children.get(i).lexema;
                     tokenValor = nodo.children.get(i).token;
 
-                    if (tokenValor == 100) {
+                    if (!(symbolTable.contains(valor)) && tokenValor == 100) {
+                        System.out.println(valor + " no está declarado. (Renglón " + renglon + ")");
+                        System.exit(0);
+                    }
 
+                    if (tokenValor == 100) {
                         if (symbolTable.getEntry(valor).type.equalsIgnoreCase("Palabra Reservada")) {
                             System.out.println("No puedes usar el nombre del programa");
                             System.exit(0);
@@ -343,6 +348,11 @@ public class Sintactico2 {
                     // Comprobar si la misma variable se asigna a sí misma
                     if (valor.equals(lexema) && nodo.children.size() == 2) {
                         System.out.println("No puedes asignar la misma variable");
+                        System.exit(0);
+                    }
+
+                    if ((tokenValor == 101 && !type.equals("Int")) || (tokenValor == 102 && !type.equals("Real"))) {
+                        System.out.println("No se puede asignar un tipo diferente de dato (Renglón " + (renglon - 1) + ")");
                         System.exit(0);
                     }
                 } else {
@@ -367,7 +377,6 @@ public class Sintactico2 {
                     if (tokenValor == 100 || tokenValorPrev == 100) {
 
                         if (tokenValor == 100) {
-
                             if (symbolTable.getEntry(valor).type.equalsIgnoreCase("Palabra Reservada")) {
                                 System.out.println("No puedes usar el nombre del programa");
                                 System.exit(0);
@@ -384,6 +393,10 @@ public class Sintactico2 {
 
                     if (tokenValor == 101 || tokenValorPrev == 101) {
                         String tipo = "Int";
+                        if (!type.equals(tipo)) {
+                            System.out.println("No se puede asignar un tipo diferente de dato (Renglón " + renglon + ")");
+                            System.exit(0);
+                        }
 
                         if (tokenValor == 101 && tokenValorPrev == 100) {
                             if (!(symbolTable.getEntry(valorPrev).type.equals(tipo))) {
@@ -399,6 +412,10 @@ public class Sintactico2 {
 
                     } else if (tokenValor == 102 || tokenValorPrev == 102) {
                         String tipo = "Real";
+                        if (!type.equals(tipo)) {
+                            System.out.println("No se puede asignar un tipo diferente de dato (Renglón " + renglon + ")");
+                            System.exit(0);
+                        }
 
                         if (tokenValor == 102 && tokenValorPrev == 100) {
                             if (!(symbolTable.getEntry(valorPrev).type.equals(tipo))) {
@@ -422,9 +439,9 @@ public class Sintactico2 {
             }
         }
 
+        symbolTable.addEntry(lexema, type, nodo.token, renglon, rFinal);
 
 
-        symbolTable.addEntry(lexema, "a", nodo.token, renglon, rFinal);
 
         for (int i = 0; i < nodo.children.size(); i++) {
             agregarTablaSimbolos(nodo.children.get(i).token, nodo.children.get(i).lexema);
