@@ -31,7 +31,6 @@ class SymbolTable {
     }
 
     public boolean contains(String name) {
-
         String entrada;
         for (int i = 0; i < tabla.size(); i++) {
             entrada = tabla.get(i).name;

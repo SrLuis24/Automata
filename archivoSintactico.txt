@@ -2,11 +2,10 @@ program test;
 var a,b,c,y : real;
 var d,r,x : integer;
 begin
-    r = b * c;
     x = 1;
     y = 10.1;
     while
-        x > r
+        10 > 1
     do
     begin
         x = 1 + 1;

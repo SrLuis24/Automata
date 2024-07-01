@@ -22,9 +22,6 @@ class SymbolTableEntry {
 
     @Override
     public String toString() {
-        //if (valor == null) {
-            return "Nombre: " + name + ", Tipo: " + type + ", Token: " + token + ", Renglón: " + renglon;
-        //}
-        //return "Nombre: " + name + ", Tipo: " + type + ", Token: " + token + ", Renglón: " + renglon + ", Valor: " + valor;
+        return "Nombre: " + name + ", Tipo: " + type + ", Token: " + token + ", Renglón: " + renglon;
     }
 }
