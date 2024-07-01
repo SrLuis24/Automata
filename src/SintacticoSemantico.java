@@ -1,8 +1,7 @@
-import javax.jws.soap.SOAPBinding;
 import java.util.Collections;
 import java.util.List;
 
-public class Sintactico2 {
+public class SintacticoSemantico {
 
     private String lexema;
     private int token;
@@ -14,7 +13,7 @@ public class Sintactico2 {
     private String tipoDato;
 
 
-    public Sintactico2(Nodo nodo) {
+    public SintacticoSemantico(Nodo nodo) {
 
         this.nodo = nodo;
         lexema = nodo.lexema;

@@ -1,7 +1,6 @@
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.Arrays;
 
 public class Main {
     static Nodo actual = null;
@@ -212,13 +211,13 @@ public class Main {
         nodo = actual; // Se le asigna a nodo los nodos actuales
 
         //new Sintactico(nodo);
-        Sintactico2 sintactico = new Sintactico2(nodo);
+        SintacticoSemantico sintactico = new SintacticoSemantico(nodo);
 
         SymbolTable symbolTable = sintactico.getSymbolTable();
         System.out.println("Tabla de Simbolos: ");
         System.out.println(symbolTable.toString());
 
-        int renglonFinal = Sintactico2.getRenglon();
+        int renglonFinal = SintacticoSemantico.getRenglon();
 
         System.out.println(); // Se dará un espacio en blanco para separar de los mensajes de error
         // Se recorre los nodos en caso de ser diferente de null
