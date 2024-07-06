@@ -8,7 +8,7 @@ begin
         10 > 1
     do
     begin
-        x = 1 + 1;
+        x = 1 / ((1+1) + 1) * 2;
         if r == 2 then
         begin
             a = 2.2;

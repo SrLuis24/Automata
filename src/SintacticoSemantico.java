@@ -8,6 +8,7 @@ public class SintacticoSemantico {
     private Nodo nodo;
     private static int renglon;
     private int fin = 0;
+    private int parentesis = 0;
 
     private SymbolTable symbolTable;
     private String tipoDato;
@@ -111,6 +112,7 @@ public class SintacticoSemantico {
                     if (fin != 0) getError("end");
                     else {
                         System.out.println("Perfecto");
+
                         return;
                     }
                 }
@@ -294,7 +296,19 @@ public class SintacticoSemantico {
                 nuevoToken();
                 operaciones(asignacion);
 
+                if (parentesis!=0) {
+                    if (parentesis < 0) {
+                        System.out.println("Te falto abrir un paréntesis");
+                    } else {
+                        System.out.println("Te falto cerrar un paréntesis. Menso");
+                    }
+
+                    System.exit(0);
+                }
+
                 agregarDefTabla(asignacion);
+
+                new InfijoPosfijo(asignacion);
 
                 printTree(asignacion, "");
             }
@@ -390,10 +404,23 @@ public class SintacticoSemantico {
             nodo.addChild(new TreeNode(lexema, lexema, token));
             nuevoToken();
 
+            while (token == 114) {
+                nodo.addChild(new TreeNode(lexema, lexema, token));
+                parentesis++;
+                nuevoToken();
+            }
+
             if (token == 100 || token == 101 || token == 102) {
                 nodo.addChild(new TreeNode(lexema, lexema, token));
                 //agregarTablaSimbolos(token); // Aqui se agrega a la tabla de simbolos junto con su tipo de dato.
                 nuevoToken();
+
+                while (token == 115) {
+                    nodo.addChild(new TreeNode(lexema, lexema, token));
+                    parentesis--;
+                    nuevoToken();
+                }
+
                 if (token == 118) {
                     //agregarTablaSimbolos(token);
                     nuevoToken();
@@ -406,12 +433,26 @@ public class SintacticoSemantico {
                         getError("numLetra");
                     }
                     while (token != 118) {
+
+                        while (token == 114) {
+                            nodo.addChild(new TreeNode(lexema, lexema, token));
+                            parentesis++;
+                            nuevoToken();
+                        }
+
                         if (token == 100 || token == 101 || token == 102) {
 
                             //agregarTablaSimbolos(token);
                             nodo.addChild(new TreeNode(lexema, lexema, token));
 
                             nuevoToken();
+
+                            while (token == 115) {
+                                nodo.addChild(new TreeNode(lexema, lexema, token));
+                                parentesis--;
+                                nuevoToken();
+                            }
+
                             if (token == 118) {
                                 //agregarTablaSimbolos(token);
                                 break;
