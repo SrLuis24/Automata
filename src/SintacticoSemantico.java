@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -9,12 +10,18 @@ public class SintacticoSemantico {
     private static int renglon;
     private int fin = 0;
     private int parentesis = 0;
+    private static ArrayList<TreeNode> asignaciones;
 
-    private SymbolTable symbolTable;
+    public static SymbolTable symbolTable;
     private String tipoDato;
+
+    public static ArrayList<TreeNode> getAsignaciones() {
+        return asignaciones;
+    }
 
 
     public SintacticoSemantico(Nodo nodo) {
+        asignaciones = new ArrayList<>();
 
         this.nodo = nodo;
         lexema = nodo.lexema;
@@ -308,7 +315,7 @@ public class SintacticoSemantico {
 
                 agregarDefTabla(asignacion);
 
-                new InfijoPosfijo(asignacion);
+                asignaciones.add(asignacion);
 
                 printTree(asignacion, "");
             }

@@ -219,6 +219,8 @@ public class Main {
 
         int renglonFinal = SintacticoSemantico.getRenglon();
 
+        new Intermedio();
+
         System.out.println(); // Se dará un espacio en blanco para separar de los mensajes de error
         // Se recorre los nodos en caso de ser diferente de null
         while (nodo != null){

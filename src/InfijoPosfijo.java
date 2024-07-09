@@ -17,7 +17,7 @@ public class InfijoPosfijo {
 
         expresiones.remove(0);
         expresiones.remove(0);
-        System.out.println(expresiones);
+        //System.out.println(expresiones);
 
         convertirPosfijo();
 
@@ -35,9 +35,9 @@ public class InfijoPosfijo {
                 }
 
                 int pE = prioridadEnExpresion(expresion);
-                System.out.println("pE " + pE);
+                //System.out.println("pE " + pE);
                 int pP = prioridadEnExpresion(pila.lastElement());
-                System.out.println("pP " + pP);
+                //System.out.println("pP " + pP);
 
                 if (pE == 0) {
                     pila.push(expresion);
@@ -48,13 +48,13 @@ public class InfijoPosfijo {
                         if (op.equals("(")) {
                             break;
                         }
-                        exPosfija.append(op);
+                        exPosfija.append(op + ",");
                     }
                 } else if (pE == pP) {
                     String opEnPila = pila.pop();
                     pila.push(expresion);
 
-                    exPosfija.append(opEnPila);
+                    exPosfija.append(opEnPila + ",");
                 } else if (pE > pP) {
                     pila.push(expresion);
                 } else if (pE < pP) {
@@ -64,24 +64,26 @@ public class InfijoPosfijo {
                         if (opEnPila.equals("(") || opEnPila.equals(")")) {
                             break;
                         }
-                        exPosfija.append(opEnPila);
+                        exPosfija.append(opEnPila + ",");
                     }
                 }
 
 
             } else {
-                exPosfija.append(expresion);
+                exPosfija.append(expresion + ",");
             }
 
         }
 
         if (!pila.isEmpty()) {
             for (int i = 0; i <= pila.size(); i++) {
-                exPosfija.append(pila.pop());
+                exPosfija.append(pila.pop() + ",");
             }
         }
 
-        System.out.println(exPosfija + "\n");
+        exPosfija.deleteCharAt(exPosfija.length()-1);
+
+        //    System.out.println(exPosfija);
 
 
 
@@ -110,6 +112,10 @@ public class InfijoPosfijo {
             System.out.println(letra);
             return 0;
         }
+    }
+
+    public StringBuilder getExpresionPosfija() {
+        return exPosfija;
     }
 
 }
