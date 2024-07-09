@@ -12,6 +12,7 @@ public class Cuadruplo {
         this.resultado = resultado;
     }
 
+
     public String toString() {
         return "(" + operador + ", " + operando1 + ", " + operando2 + ", " + resultado + ")";
     }

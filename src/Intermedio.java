@@ -10,11 +10,11 @@ public class Intermedio {
         for (TreeNode nodo : asignaciones) {
             InfijoPosfijo expresion = new InfijoPosfijo(nodo);
 
-            System.out.println(SintacticoSemantico.symbolTable.getEntry(nodo.lexema).type);
+            String tipo = SintacticoSemantico.symbolTable.getEntry(nodo.lexema).type;
 
             String posfijo = expresion.getExpresionPosfija().toString();
 
-            List<Cuadruplo> cuadruplos = PosfijoACuadruplos.crearCuadruplos(posfijo);
+            List<Cuadruplo> cuadruplos = PosfijoACuadruplos.crearCuadruplos(posfijo, tipo);
 
             boolean pr = true;
             for (Cuadruplo c : cuadruplos) {
