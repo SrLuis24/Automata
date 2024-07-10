@@ -37,7 +37,7 @@ public class SintacticoSemantico {
         switch (error)
         {
             case ".":
-                System.out.println("Se esperaba '.' al final del programa");
+                System.out.println("Se esperaba '.' al final del programa ");
                 break;
             case "cierre":
                 System.out.println("Se esperaba cierre de línea. (Renglón " + renglon + ")");
@@ -330,6 +330,7 @@ public class SintacticoSemantico {
         if (token == 209) {
             agregarTablaSimbolos(token);
             alternativas();
+            nuevoToken();
             if (token == 211) {
                 agregarTablaSimbolos(token);
                 alternativasElse();

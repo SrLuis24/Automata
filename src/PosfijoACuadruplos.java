@@ -11,13 +11,13 @@ public class PosfijoACuadruplos {
         //String[] tokens = posfijo.split("(?<=[-+*/])|(?=[-+*/])");
         String[] tokens = posfijo.split(",");
         int contVarTemp = 1;
-        //System.out.println(Arrays.toString(tokens) + " <-");
+
 
         for (String token : tokens) {
             if (token.matches("\\d+(\\.\\d+)?")) {
                 pila.push(token);
             } else {
-                //System.out.println(pila);
+
                 String operando2 = pila.pop();
                 String operando1 = pila.pop();
                 String resultado = "t" + contVarTemp++;
