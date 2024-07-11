@@ -214,8 +214,8 @@ public class Main {
         SintacticoSemantico sintactico = new SintacticoSemantico(nodo);
 
         SymbolTable symbolTable = sintactico.getSymbolTable();
-        //     System.out.println("Tabla de Simbolos: ");
-        //     System.out.println(symbolTable.toString());
+             System.out.println("Tabla de Simbolos: ");
+             System.out.println(symbolTable.toString());
 
         int renglonFinal = SintacticoSemantico.getRenglon();
 

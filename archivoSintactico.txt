@@ -9,7 +9,7 @@ begin
     do
     begin
         x = 1 / ((2+1) + 1) * 2;
-        if r == 2 then
+        if 1 > 2 then
             begin
                 a = 2.2 + 1.1;
             end

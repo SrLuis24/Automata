@@ -11,6 +11,7 @@ public class SintacticoSemantico {
     private int fin = 0;
     private int parentesis = 0;
     private static ArrayList<TreeNode> asignaciones;
+    private static Boolean condicionValida = true;
 
     public static SymbolTable symbolTable;
     private String tipoDato;
@@ -344,7 +345,21 @@ public class SintacticoSemantico {
             condicion();
             if (token == 213) {
                 agregarTablaSimbolos(token);
-                bloque();
+
+                if(condicionValida) {
+                    bloque();
+                } else {
+                    int contBegin = 0;
+                    do {
+                        nuevoToken();
+                        if (token == 205) contBegin++;
+                        if (token == 206) contBegin--;
+
+                        if (contBegin == 0) {
+                            break;
+                        }
+                    } while (nodo != null);
+                }
             } else {
                 getError("do");
             }
@@ -498,19 +513,48 @@ public class SintacticoSemantico {
 
     private void alternativas() {
         nuevoToken();
+
         condicion();
+        //System.out.println(lexema + " <--");
         if (token == 210) {
             agregarTablaSimbolos(token);
-            nuevoToken();
-            bloqueEnunciados();
+
+            if(condicionValida) {
+                nuevoToken();
+                bloqueEnunciados();
+            } else {
+                int contBegin = 0;
+                do {
+                    nuevoToken();
+                    if (token == 205) contBegin++;
+                    if (token == 206) contBegin--;
+
+                    if (contBegin == 0) {
+                        break;
+                    }
+                } while (nodo != null);
+            }
         } else {
             getError("then");
         }
     }
 
     private void alternativasElse() {
-        nuevoToken();
-        bloqueEnunciados();
+        if(!condicionValida) {
+            nuevoToken();
+            bloqueEnunciados();
+        } else {
+            int contBegin = 0;
+            do {
+                nuevoToken();
+                if (token == 205) contBegin++;
+                if (token == 206) contBegin--;
+
+                if (contBegin == 0) {
+                    break;
+                }
+            } while (nodo != null);
+        }
     }
 
     private void bloqueEnunciados() {
@@ -528,20 +572,22 @@ public class SintacticoSemantico {
         if (token == 100 || token == 101 || token == 102) {
             agregarTablaSimbolos(token);
 
-            condiciones.addChild(new TreeNode(lexema, lexema));
+            condiciones.addChild(new TreeNode(lexema, lexema, token));
 
             nuevoToken();
             if (token == 108 || token == 109 || token == 110 || token == 111 || token == 112 || token == 113) {
                 agregarTablaSimbolos(token);
-                condiciones.addChild(new TreeNode(lexema, lexema));
+                condiciones.addChild(new TreeNode(lexema, lexema, token));
 
                 nuevoToken();
                 if (token == 100 || token == 101 || token == 102) {
                     agregarTablaSimbolos(token);
-                    condiciones.addChild(new TreeNode(lexema, lexema));
+                    condiciones.addChild(new TreeNode(lexema, lexema, token));
 
                     mismoTipo(condiciones);
-
+                    //System.out.println(token + " <- " + lexema);
+                    condicionValida(condiciones);
+                    System.out.println(condicionValida.toString() + " <-- Resultado de condición");
                     printTree(condiciones, "");
                     nuevoToken();
                 } else if (token == 222 || token == 223) {
@@ -807,6 +853,11 @@ public class SintacticoSemantico {
 
     private void agregarTablaSimbolos(int token) {
 
+        if (!condicionValida) {
+            //System.out.println("aaa ");
+            //return;
+        }
+
         if (!symbolTable.contains(lexema) && (token == 100)) {
             System.out.println(lexema + " no está declarado. (Renglón " + renglon + ")");
             System.exit(0);
@@ -852,5 +903,135 @@ public class SintacticoSemantico {
         }
     }
 
+    private void condicionValida(TreeNode nodo) {
+
+        String param1 = "";
+        int tipoParam1 = 0;
+        String param2 = "";
+        int tipoParam2 = 0;
+        String operador = "";
+
+        if (nodo != null) {
+            for (TreeNode child : nodo.children) {
+                //System.out.println(child.lexema + " <--");
+                if (param1.equals("")) {
+                    param1 = child.lexema;
+
+                    tipoParam1 = child.token;
+                    //System.out.println(child.token + " <- Token");
+                }
+                else if (operador.equals("")) operador = child.lexema;
+                else if (param2.equals("")) {
+                    param2 = child.lexema;
+                    tipoParam2 = child.token;
+                }
+            }
+
+
+            if (operador.equals("<") || operador.equals("< ")) {
+
+                if (tipoParam1 == 101) {
+                    int valorParam1 = Integer.parseInt(param1);
+                    int valorParam2 = Integer.parseInt(param2);
+
+                    condicionValida = valorParam1 < valorParam2;
+                } else if (tipoParam1 == 102) {
+                    float valorParam1 = Float.parseFloat(param1);
+                    float valorParam2 = Float.parseFloat(param2);
+                    condicionValida = valorParam1 < valorParam2;
+                } else {
+                    System.out.println("Tipo de valores diferentes.");
+                    System.exit(0);
+                }
+
+            } else if (operador.equals(">")) {
+
+                //System.out.println(tipoParam1);
+                if (tipoParam1 == 101) {
+                    int valorParam1 = Integer.parseInt(param1);
+                    int valorParam2 = Integer.parseInt(param2);
+
+                    condicionValida = valorParam1 > valorParam2;
+                } else if (tipoParam1 == 102) {
+                    float valorParam1 = Float.parseFloat(param1);
+                    float valorParam2 = Float.parseFloat(param2);
+
+                    condicionValida = valorParam1 > valorParam2;
+                } else {
+                    System.out.println("Tipo de valores diferentes.");
+                    System.exit(0);
+                }
+
+            } else if (operador.equals("<=")) {
+
+                if (tipoParam1 == 101) {
+                    int valorParam1 = Integer.parseInt(param1);
+                    int valorParam2 = Integer.parseInt(param2);
+
+                    condicionValida = valorParam1 <= valorParam2;
+                } else if (tipoParam1 == 102) {
+                    float valorParam1 = Float.parseFloat(param1);
+                    float valorParam2 = Float.parseFloat(param2);
+
+                    condicionValida = valorParam1 <= valorParam2;
+                } else {
+                    System.out.println("Tipo de valores diferentes.");
+                    System.exit(0);
+                }
+
+            } else if (operador.equals(">=")) {
+
+                if (tipoParam1 == 101) {
+                    int valorParam1 = Integer.parseInt(param1);
+                    int valorParam2 = Integer.parseInt(param2);
+
+                    condicionValida = valorParam1 >= valorParam2;
+                } else if (tipoParam1 == 102) {
+                    float valorParam1 = Float.parseFloat(param1);
+                    float valorParam2 = Float.parseFloat(param2);
+
+                    condicionValida = valorParam1 >= valorParam2;
+                } else {
+                    System.out.println("Tipo de valores diferentes.");
+                    System.exit(0);
+                }
+
+            } else if (operador.equals("!=")) {
+
+                if (tipoParam1 == 101) {
+                    int valorParam1 = Integer.parseInt(param1);
+                    int valorParam2 = Integer.parseInt(param2);
+
+                    condicionValida = valorParam1 != valorParam2;
+                } else if (tipoParam1 == 102) {
+                    float valorParam1 = Float.parseFloat(param1);
+                    float valorParam2 = Float.parseFloat(param2);
+
+                    condicionValida = valorParam1 != valorParam2;
+                } else {
+                    System.out.println("Tipo de valores diferentes.");
+                    System.exit(0);
+                }
+
+            } else if (operador.equals("==")) {
+
+                if (tipoParam1 == 101) {
+                    int valorParam1 = Integer.parseInt(param1);
+                    int valorParam2 = Integer.parseInt(param2);
+
+                    condicionValida = valorParam1 == valorParam2;
+                } else if (tipoParam1 == 102) {
+                    float valorParam1 = Float.parseFloat(param1);
+                    float valorParam2 = Float.parseFloat(param2);
+
+                    condicionValida = valorParam1 == valorParam2;
+                } else {
+                    System.out.println("Tipo de valores diferentes.");
+                    System.exit(0);
+                }
+
+            }
+        }
+    }
 
 }
