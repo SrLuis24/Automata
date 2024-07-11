@@ -1,9 +1,8 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 public class PosfijoACuadruplos {
+
+    private static Map<String, String> valoresT = new HashMap<>();
 
     public static List<Cuadruplo> crearCuadruplos(String posfijo, String tipo) {
         Stack<String> pila = new Stack<>();
@@ -22,10 +21,12 @@ public class PosfijoACuadruplos {
                 String operando1 = pila.pop();
                 String resultado = "t" + contVarTemp++;
 
-                //String valor = realizarOperacion(tipo, token, operando1, operando2);
+                String valor = realizarOperacion(tipo, token, operando1, operando2);
+                valoresT.put(resultado, valor);
 
                 cuadruplos.add(new Cuadruplo(token, operando1, operando2, resultado));
                 pila.push(resultado);
+
             }
         }
 
@@ -38,6 +39,7 @@ public class PosfijoACuadruplos {
 
         if (tipo.equals("Int")) {
             int r = 0;
+
             int op1 = Integer.parseInt(operando1);
             int op2 = Integer.parseInt(operando2);
             if (operador.equals("+")) {

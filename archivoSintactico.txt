@@ -2,14 +2,13 @@ program test;
 var a,b,c,y : real;
 var d,r,x : integer;
 begin
-    x = 1 + 1;
-    y = 10.1 + 1.2;
+    a = (((1.1) + 1.1));
     while
         10 > 1
     do
     begin
         x = 1 / ((2+1) + 1) * 2;
-        if 1 > 2 then
+        if 1 < 2 then
             begin
                 a = 2.2 + 1.1;
             end
