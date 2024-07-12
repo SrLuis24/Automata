@@ -6,11 +6,14 @@ public class Intermedio {
     private SymbolTable tablaSimbolos;
     private ArrayList<TreeNode> asignaciones = SintacticoSemantico.getAsignaciones();
     private ArrayList<TreeNode> declaraciones = SintacticoSemantico.getDeclaraciones();
+    private ArrayList<TreeNode> condiciones = SintacticoSemantico.getCondiciones();
 
     public Intermedio(SymbolTable tablaSimbolos) {
         this.tablaSimbolos = tablaSimbolos;
 
         imprimirDeclaraciones();
+
+        imprimirCondiciones();
 
         for (TreeNode nodo : asignaciones) {
             InfijoPosfijo expresion = new InfijoPosfijo(nodo);
@@ -49,6 +52,21 @@ public class Intermedio {
                 System.out.println(c);
                 System.out.println("");
             }
+        }
+    }
+
+    private void imprimirCondiciones() {
+        for (TreeNode a : condiciones) {
+
+            String op1 = a.children.get(0).lexema;
+            String operador = a.children.get(1).lexema;
+            String op2 = a.children.get(2).lexema;
+2
+
+            Cuadruplo c = new Cuadruplo(operador, op1, op2, "");
+            System.out.println("Cuadruplo");
+            System.out.println(c);
+            System.out.println("");
         }
     }
 

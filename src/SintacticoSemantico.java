@@ -12,6 +12,7 @@ public class SintacticoSemantico {
     private int parentesis = 0;
     private static ArrayList<TreeNode> asignaciones;
     private static ArrayList<TreeNode> declaracionesLista;
+    private static ArrayList<TreeNode> condicionesLista;
     private static Boolean condicionValida = true;
 
     public static SymbolTable symbolTable;
@@ -25,10 +26,15 @@ public class SintacticoSemantico {
         return declaracionesLista;
     }
 
+    public static ArrayList<TreeNode> getCondiciones() {
+        return condicionesLista;
+    }
+
 
     public SintacticoSemantico(Nodo nodo) {
         asignaciones = new ArrayList<>();
         declaracionesLista = new ArrayList<>();
+        condicionesLista = new ArrayList<>();
 
         this.nodo = nodo;
         lexema = nodo.lexema;
@@ -595,6 +601,7 @@ public class SintacticoSemantico {
                     //System.out.println(token + " <- " + lexema);
                     condicionValida(condiciones);
                     //        System.out.println(condicionValida.toString() + " <-- Resultado de condición");
+                    condicionesLista.add(condiciones);
                     printTree(condiciones, "");
                     nuevoToken();
                 } else if (token == 222 || token == 223) {
@@ -603,6 +610,8 @@ public class SintacticoSemantico {
 
                     mismoTipo(condiciones);
 
+                    condicionesLista.add(condiciones);
+                    //System.out.println(condicionesLista + " <- COndiciones Lista");
                     printTree(condiciones, "");
                     nuevoToken();
                 } else {
