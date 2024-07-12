@@ -214,12 +214,12 @@ public class Main {
         SintacticoSemantico sintactico = new SintacticoSemantico(nodo);
 
         SymbolTable symbolTable = sintactico.getSymbolTable();
-             System.out.println("Tabla de Simbolos: ");
-             System.out.println(symbolTable.toString());
+             //System.out.println("Tabla de Simbolos: ");
+             //System.out.println(symbolTable.toString());
 
         int renglonFinal = SintacticoSemantico.getRenglon();
 
-        new Intermedio();
+        new Intermedio(symbolTable);
 
         System.out.println(); // Se dará un espacio en blanco para separar de los mensajes de error
         // Se recorre los nodos en caso de ser diferente de null

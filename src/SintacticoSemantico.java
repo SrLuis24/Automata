@@ -11,6 +11,7 @@ public class SintacticoSemantico {
     private int fin = 0;
     private int parentesis = 0;
     private static ArrayList<TreeNode> asignaciones;
+    private static ArrayList<TreeNode> declaracionesLista;
     private static Boolean condicionValida = true;
 
     public static SymbolTable symbolTable;
@@ -20,9 +21,14 @@ public class SintacticoSemantico {
         return asignaciones;
     }
 
+    public static ArrayList<TreeNode> getDeclaraciones() {
+        return declaracionesLista;
+    }
+
 
     public SintacticoSemantico(Nodo nodo) {
         asignaciones = new ArrayList<>();
+        declaracionesLista = new ArrayList<>();
 
         this.nodo = nodo;
         lexema = nodo.lexema;
@@ -119,7 +125,7 @@ public class SintacticoSemantico {
                 if (nodo == null && token == 116) {
                     if (fin != 0) getError("end");
                     else {
-                        System.out.println("Perfecto");
+                        System.out.println("Perfecto\n");
 
                         return;
                     }
@@ -130,7 +136,7 @@ public class SintacticoSemantico {
                         if (fin != 0) getError("end");
                         else {
                             agregarTablaSimbolos(token);
-                            System.out.println("Perfecto");
+                            System.out.println("Perfecto\n");
                             renglon = nodo.renglon;
                             return;
                         }
@@ -211,7 +217,7 @@ public class SintacticoSemantico {
         }
     }
 
-    private void printTree(TreeNode node, String indent) {
+    private static void printTree(TreeNode node, String indent) {
         if (node != null) {
             //System.out.println(indent + node.value);
             for (TreeNode child : node.children) {
@@ -224,6 +230,7 @@ public class SintacticoSemantico {
         TreeNode declaraciones = new TreeNode("declaraciones", lexema);
         
         listaIdentificadorDeclaraciones(declaraciones);
+        declaracionesLista.add(declaraciones);
 
         printTree(declaraciones, "");
 
@@ -587,7 +594,7 @@ public class SintacticoSemantico {
                     mismoTipo(condiciones);
                     //System.out.println(token + " <- " + lexema);
                     condicionValida(condiciones);
-                    System.out.println(condicionValida.toString() + " <-- Resultado de condición");
+                    //        System.out.println(condicionValida.toString() + " <-- Resultado de condición");
                     printTree(condiciones, "");
                     nuevoToken();
                 } else if (token == 222 || token == 223) {
