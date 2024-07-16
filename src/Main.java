@@ -84,7 +84,7 @@ public class Main {
                             break;
                         case ':': columna = 21;
                             break;
-                        case 9 : columna = 18;
+                        case '\'': columna = 18;
                             break;
                         case 10 :
                             // En caso de que se termine la linea manda a dicha columna
@@ -93,8 +93,14 @@ public class Main {
                             columna = 20;
                             renglon++;
                             break;
+                        case 13:
+                            columna = 20;
+                            break;
                         default :
                             // Si no encuentra el caracter se da como resultado el fin de archivo
+                            if (simbolo == -1) {
+                                break;
+                            }
                             columna=19;
                     }
                 }
@@ -201,6 +207,7 @@ public class Main {
                     // Se imprime el mensaje de error
                     System.out.println(errores[0] + ", Código de error: " + token + ", renglón del error: " + renglon);
                     errorEcontrado = true;
+                    System.exit(0);
                     break; // Se termina el bucle debido a que se encontro el error esperado
                 }
             }

@@ -61,7 +61,6 @@ public class Intermedio {
             String op1 = a.children.get(0).lexema;
             String operador = a.children.get(1).lexema;
             String op2 = a.children.get(2).lexema;
-2
 
             Cuadruplo c = new Cuadruplo(operador, op1, op2, "");
             System.out.println("Cuadruplo");
