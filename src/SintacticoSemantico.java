@@ -10,31 +10,19 @@ public class SintacticoSemantico {
     private static int renglon;
     private int fin = 0;
     private int parentesis = 0;
-    private static ArrayList<TreeNode> asignaciones;
-    private static ArrayList<TreeNode> declaracionesLista;
-    private static ArrayList<TreeNode> condicionesLista;
+    private static ArrayList<TreeNode> listaIntermedio;
     private static Boolean condicionValida = true;
 
     public static SymbolTable symbolTable;
     private String tipoDato;
 
-    public static ArrayList<TreeNode> getAsignaciones() {
-        return asignaciones;
-    }
-
-    public static ArrayList<TreeNode> getDeclaraciones() {
-        return declaracionesLista;
-    }
-
-    public static ArrayList<TreeNode> getCondiciones() {
-        return condicionesLista;
+    public static ArrayList<TreeNode> getListaIntermedio() {
+        return listaIntermedio;
     }
 
 
     public SintacticoSemantico(Nodo nodo) {
-        asignaciones = new ArrayList<>();
-        declaracionesLista = new ArrayList<>();
-        condicionesLista = new ArrayList<>();
+        listaIntermedio = new ArrayList<>();
 
         this.nodo = nodo;
         lexema = nodo.lexema;
@@ -62,7 +50,7 @@ public class SintacticoSemantico {
                 System.out.println("Se esperaba iniciar con 'program' (Renglón " + renglon + ")");
                 break;
             case "end":
-                System.out.println("Se esperaba finalizar un end");
+                System.out.println("Se esperaba finalizar un end " + fin);
                 break;
             case "identificador":
                 System.out.println("Se esperaba un identificador (Renglón " + renglon + ")");
@@ -102,7 +90,7 @@ public class SintacticoSemantico {
                 System.out.println("Hay un error.");
         }
 
-        System.exit(0);
+        //System.exit(0);
     }
 
     private void nuevoToken() {
@@ -236,7 +224,7 @@ public class SintacticoSemantico {
         TreeNode declaraciones = new TreeNode("declaraciones", lexema);
         
         listaIdentificadorDeclaraciones(declaraciones);
-        declaracionesLista.add(declaraciones);
+        listaIntermedio.add(declaraciones);
 
         printTree(declaraciones, "");
 
@@ -321,7 +309,7 @@ public class SintacticoSemantico {
                     if (parentesis < 0) {
                         System.out.println("Te falto abrir un paréntesis");
                     } else {
-                        System.out.println("Te falto cerrar un paréntesis. Menso");
+                        System.out.println("Te falto cerrar un paréntesis.");
                     }
 
                     System.exit(0);
@@ -329,7 +317,7 @@ public class SintacticoSemantico {
 
                 agregarDefTabla(asignacion);
 
-                asignaciones.add(asignacion);
+                listaIntermedio.add(asignacion);
 
                 printTree(asignacion, "");
             }
@@ -345,6 +333,11 @@ public class SintacticoSemantico {
             agregarTablaSimbolos(token);
             alternativas();
             nuevoToken();
+            if (token == 206) {
+                agregarTablaSimbolos(token);
+                fin--;
+                return;
+            }
             if (token == 211) {
                 agregarTablaSimbolos(token);
                 alternativasElse();
@@ -541,7 +534,7 @@ public class SintacticoSemantico {
                     nuevoToken();
                     if (token == 205) contBegin++;
                     if (token == 206) contBegin--;
-
+                    //System.out.println(token + " <- token bloque condicion");
                     if (contBegin == 0) {
                         break;
                     }
@@ -601,7 +594,7 @@ public class SintacticoSemantico {
                     //System.out.println(token + " <- " + lexema);
                     condicionValida(condiciones);
                     //        System.out.println(condicionValida.toString() + " <-- Resultado de condición");
-                    condicionesLista.add(condiciones);
+                    listaIntermedio.add(condiciones);
                     printTree(condiciones, "");
                     nuevoToken();
                 } else if (token == 222 || token == 223) {
@@ -610,7 +603,7 @@ public class SintacticoSemantico {
 
                     mismoTipo(condiciones);
 
-                    condicionesLista.add(condiciones);
+                    listaIntermedio.add(condiciones);
                     //System.out.println(condicionesLista + " <- COndiciones Lista");
                     printTree(condiciones, "");
                     nuevoToken();

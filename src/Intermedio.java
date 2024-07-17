@@ -4,18 +4,25 @@ import java.util.List;
 public class Intermedio {
 
     private SymbolTable tablaSimbolos;
-    private ArrayList<TreeNode> asignaciones = SintacticoSemantico.getAsignaciones();
-    private ArrayList<TreeNode> declaraciones = SintacticoSemantico.getDeclaraciones();
-    private ArrayList<TreeNode> condiciones = SintacticoSemantico.getCondiciones();
+    private ArrayList<TreeNode> listaIntermedio = SintacticoSemantico.getListaIntermedio();
 
     public Intermedio(SymbolTable tablaSimbolos) {
         this.tablaSimbolos = tablaSimbolos;
+        //System.out.println(listaIntermedio + " <--");
 
-        imprimirDeclaraciones();
+        for (TreeNode nodo : listaIntermedio) {
 
-        imprimirCondiciones();
+            //System.out.println(nodo.value + " <-----");
+            if (nodo.value.equalsIgnoreCase("declaraciones")) {
+                imprimirDeclaracion(nodo);
+                continue;
+            }
 
-        for (TreeNode nodo : asignaciones) {
+            if (nodo.value.equalsIgnoreCase("condiciones")) {
+                imprimirCondicion(nodo);
+                continue;
+            }
+
             InfijoPosfijo expresion = new InfijoPosfijo(nodo);
 
             String tipo = SintacticoSemantico.symbolTable.getEntry(nodo.lexema).type;
@@ -41,10 +48,8 @@ public class Intermedio {
 
     }
 
-    private void imprimirDeclaraciones() {
-        for (TreeNode a : declaraciones) {
-
-            for (TreeNode b : a.children) {
+    private void imprimirDeclaracion(TreeNode declaracion) {
+            for (TreeNode b : declaracion.children) {
                 //System.out.println(b.lexema + " " + tablaSimbolos.getEntry(b.lexema).type);
 
                 Cuadruplo c = new Cuadruplo(tablaSimbolos.getEntry(b.lexema).type, b.lexema, "", null);
@@ -52,21 +57,19 @@ public class Intermedio {
                 System.out.println(c);
                 System.out.println("");
             }
-        }
     }
 
-    private void imprimirCondiciones() {
-        for (TreeNode a : condiciones) {
+    private void imprimirCondicion(TreeNode condicion) {
 
-            String op1 = a.children.get(0).lexema;
-            String operador = a.children.get(1).lexema;
-            String op2 = a.children.get(2).lexema;
+            String op1 = condicion.children.get(0).lexema;
+            String operador = condicion.children.get(1).lexema;
+            String op2 = condicion.children.get(2).lexema;
 
             Cuadruplo c = new Cuadruplo(operador, op1, op2, "");
             System.out.println("Cuadruplo");
             System.out.println(c);
             System.out.println("");
-        }
+
     }
 
 
