@@ -12,7 +12,7 @@ public class PosfijoACuadruplos {
 
 
         for (String token : tokens) {
-            if (token.matches("\\d+(\\.\\d+)?")) {
+            if (token.matches("[\\dA-Za-z]+(\\.\\d+)?")) {
                 pila.push(token);
             } else {
 
@@ -20,10 +20,11 @@ public class PosfijoACuadruplos {
                 String operando1 = pila.pop();
                 String resultado = "t" + Intermedio.getContVarTemp();
 
-                String valor = realizarOperacion(tipo, token, operando1, operando2);
-                valoresT.put(resultado, valor);
+                //String valor = realizarOperacion(tipo, token, operando1, operando2);
+                //valoresT.put(resultado, valor);
 
-                cuadruplos.add(new Cuadruplo(token, operando1, operando2, resultado, valor));
+                //cuadruplos.add(new Cuadruplo(token, operando1, operando2, resultado, valor));
+                cuadruplos.add(new Cuadruplo(token, operando1, operando2, resultado));
                 pila.push(resultado);
 
             }

@@ -47,14 +47,14 @@ public class Intermedio {
             }
 
             if (nodo.value.equalsIgnoreCase("else")) {
-                Cuadruplo goTo = new Cuadruplo("GOTO", " ", " ", "L"+getContLabelTemp());
+                Cuadruplo goTo = new Cuadruplo("GOTO", " ", " ", "L"+(getContLabelTemp()));
                 System.out.println(goTo);
                 System.out.println("\tL" + (getActualLabelTemp()-1) + ":");
                 continue;
             }
 
             if (nodo.value.equalsIgnoreCase("else end")) {
-                System.out.println("\tL" + getActualLabelTemp() + ":");
+                System.out.println("\tL" + labels.pop() + ":");
                 continue;
             }
             if (nodo.value.equalsIgnoreCase("end if")) {
@@ -67,9 +67,16 @@ public class Intermedio {
             String tipo = SintacticoSemantico.symbolTable.getEntry(nodo.lexema).type;
 
             String posfijo = expresion.getExpresionPosfija().toString();
+            List<Cuadruplo> cuadruplos;
 
-            List<Cuadruplo> cuadruplos = PosfijoACuadruplos.crearCuadruplos(posfijo, tipo);
-            cuadruplos.add(new Cuadruplo("Assig", "t" + getActualVarTemp(), " ", nodo.value));
+            if (true) { // Para usar el optimizado usa true y false para sin optimizar
+                cuadruplos = PosfijoACuadruplosOptimizado.crearCuadruplosOptimizado(posfijo, nodo.lexema);
+            } else {
+                cuadruplos = PosfijoACuadruplos.crearCuadruplos(posfijo, tipo);
+                cuadruplos.add(new Cuadruplo("Assig", "t" + getActualVarTemp(), " ", nodo.value));
+            }
+
+
 
             boolean pr = true;
             for (Cuadruplo c : cuadruplos) {

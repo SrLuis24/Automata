@@ -13,11 +13,10 @@ begin
         if 1 > 2 then
             begin
                 a = 2.2 + 1.1;
-                if 1 > 2 then
-                            begin
-                                a = 3.2 + 2.1;
-                            end
             end
-
+        else
+            begin
+                c = 2.1 * a;
+            end
     end
 end.

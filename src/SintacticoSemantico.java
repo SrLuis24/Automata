@@ -213,7 +213,7 @@ public class SintacticoSemantico {
 
     private static void printTree(TreeNode node, String indent) {
         if (node != null) {
-            System.out.println(indent + node.value);
+            //System.out.println(indent + node.value);
             for (TreeNode child : node.children) {
                 printTree(child, indent + "  ");
             }
@@ -342,6 +342,7 @@ public class SintacticoSemantico {
             if (token == 211) {
                 agregarTablaSimbolos(token);
                 alternativasElse();
+                listaIntermedio.add(new TreeNode("End if", "End if"));
             }
         }
 
@@ -357,16 +358,16 @@ public class SintacticoSemantico {
                     bloque();
                     listaIntermedio.add(new TreeNode("End if", "End if"));
                 } else {
-                    int contBegin = 0;
-                    do {
-                        nuevoToken();
-                        if (token == 205) contBegin++;
-                        if (token == 206) contBegin--;
-
-                        if (contBegin == 0) {
-                            break;
-                        }
-                    } while (nodo != null);
+//                    int contBegin = 0;
+//                    do {
+//                        nuevoToken();
+//                        if (token == 205) contBegin++;
+//                        if (token == 206) contBegin--;
+//
+//                        if (contBegin == 0) {
+//                            break;
+//                        }
+//                    } while (nodo != null);
                 }
             } else {
                 getError("do");
@@ -533,16 +534,16 @@ public class SintacticoSemantico {
 
 
             } else {
-                int contBegin = 0;
-                do {
-                    nuevoToken();
-                    if (token == 205) contBegin++;
-                    if (token == 206) contBegin--;
-                    //System.out.println(token + " <- token bloque condicion");
-                    if (contBegin == 0) {
-                        break;
-                    }
-                } while (nodo != null);
+//                int contBegin = 0;
+//                do {
+//                    nuevoToken();
+//                    if (token == 205) contBegin++;
+//                    if (token == 206) contBegin--;
+//                    //System.out.println(token + " <- token bloque condicion");
+//                    if (contBegin == 0) {
+//                        break;
+//                    }
+//                } while (nodo != null);
             }
         } else {
             getError("then");
@@ -556,16 +557,16 @@ public class SintacticoSemantico {
             bloqueEnunciados();
             listaIntermedio.add(new TreeNode("Else End", "else end"));
         } else {
-            int contBegin = 0;
-            do {
-                nuevoToken();
-                if (token == 205) contBegin++;
-                if (token == 206) contBegin--;
-
-                if (contBegin == 0) {
-                    break;
-                }
-            } while (nodo != null);
+//            int contBegin = 0;
+//            do {
+//                nuevoToken();
+//                if (token == 205) contBegin++;
+//                if (token == 206) contBegin--;
+//
+//                if (contBegin == 0) {
+//                    break;
+//                }
+//            } while (nodo != null);
         }
     }
 
