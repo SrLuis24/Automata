@@ -23,7 +23,7 @@ public class Cuadruplo {
 
 
     public String toString() {
-        return "(" + operador + ", " + operando1 + ", " + operando2 + ", " + resultado + ")";
+        return String.format("%-10s %-10s %-10s %-10s %-10s", "| " + operador, "| " + operando1, "| " + operando2, "| " + resultado, "|");
     }
 
 

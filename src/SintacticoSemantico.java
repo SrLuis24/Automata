@@ -213,7 +213,7 @@ public class SintacticoSemantico {
 
     private static void printTree(TreeNode node, String indent) {
         if (node != null) {
-            //System.out.println(indent + node.value);
+            System.out.println(indent + node.value);
             for (TreeNode child : node.children) {
                 printTree(child, indent + "  ");
             }
@@ -336,6 +336,7 @@ public class SintacticoSemantico {
             if (token == 206) {
                 agregarTablaSimbolos(token);
                 fin--;
+                listaIntermedio.add(new TreeNode("End if", "End if"));
                 return;
             }
             if (token == 211) {
@@ -346,14 +347,15 @@ public class SintacticoSemantico {
 
         if (token == 212) {
             agregarTablaSimbolos(token);
-
+            TreeNode condiciones = new TreeNode("condiciones", "while");
             nuevoToken();
-            condicion();
+            condicion(condiciones);
             if (token == 213) {
                 agregarTablaSimbolos(token);
 
-                if(condicionValida) {
+                if(condicionValida || true) {
                     bloque();
+                    listaIntermedio.add(new TreeNode("End if", "End if"));
                 } else {
                     int contBegin = 0;
                     do {
@@ -519,15 +521,17 @@ public class SintacticoSemantico {
 
     private void alternativas() {
         nuevoToken();
-
-        condicion();
+        TreeNode condiciones = new TreeNode("condiciones", "if");
+        condicion(condiciones);
         //System.out.println(lexema + " <--");
         if (token == 210) {
             agregarTablaSimbolos(token);
 
-            if(condicionValida) {
+            if(condicionValida || true) {
                 nuevoToken();
                 bloqueEnunciados();
+
+
             } else {
                 int contBegin = 0;
                 do {
@@ -546,9 +550,11 @@ public class SintacticoSemantico {
     }
 
     private void alternativasElse() {
-        if(!condicionValida) {
+        if(!condicionValida || true) {
+            listaIntermedio.add(new TreeNode("Else", "else"));
             nuevoToken();
             bloqueEnunciados();
+            listaIntermedio.add(new TreeNode("Else End", "else end"));
         } else {
             int contBegin = 0;
             do {
@@ -573,8 +579,8 @@ public class SintacticoSemantico {
         }
     }
 
-    private void condicion() {
-        TreeNode condiciones = new TreeNode("condiciones", "");
+    private void condicion(TreeNode condiciones) {
+
         if (token == 100 || token == 101 || token == 102) {
             agregarTablaSimbolos(token);
 

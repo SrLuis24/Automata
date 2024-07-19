@@ -9,7 +9,6 @@ public class PosfijoACuadruplos {
         List<Cuadruplo> cuadruplos = new ArrayList<>();
         //String[] tokens = posfijo.split("(?<=[-+*/])|(?=[-+*/])");
         String[] tokens = posfijo.split(",");
-        int contVarTemp = 1;
 
 
         for (String token : tokens) {
@@ -19,7 +18,7 @@ public class PosfijoACuadruplos {
 
                 String operando2 = pila.pop();
                 String operando1 = pila.pop();
-                String resultado = "t" + contVarTemp++;
+                String resultado = "t" + Intermedio.getContVarTemp();
 
                 String valor = realizarOperacion(tipo, token, operando1, operando2);
                 valoresT.put(resultado, valor);

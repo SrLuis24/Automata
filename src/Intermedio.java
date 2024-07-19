@@ -1,14 +1,37 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 public class Intermedio {
 
     private SymbolTable tablaSimbolos;
     private ArrayList<TreeNode> listaIntermedio = SintacticoSemantico.getListaIntermedio();
+    private static int contVarTemp = 0;
+    private static int contLabelTemp = 0;
+    private static Stack<String> labels = new Stack<>();
+
+    public static int getContVarTemp() {
+        return ++contVarTemp;
+    }
+
+    public static int getActualVarTemp() {
+        return contVarTemp;
+    }
+
+    public static int getContLabelTemp() {
+        ++contLabelTemp;
+        labels.add(contLabelTemp+"");
+        return contLabelTemp;
+    }
+
+    public static int getActualLabelTemp() {
+        return contLabelTemp;
+    }
 
     public Intermedio(SymbolTable tablaSimbolos) {
         this.tablaSimbolos = tablaSimbolos;
         //System.out.println(listaIntermedio + " <--");
+
 
         for (TreeNode nodo : listaIntermedio) {
 
@@ -23,6 +46,22 @@ public class Intermedio {
                 continue;
             }
 
+            if (nodo.value.equalsIgnoreCase("else")) {
+                Cuadruplo goTo = new Cuadruplo("GOTO", " ", " ", "L"+getContLabelTemp());
+                System.out.println(goTo);
+                System.out.println("\tL" + (getActualLabelTemp()-1) + ":");
+                continue;
+            }
+
+            if (nodo.value.equalsIgnoreCase("else end")) {
+                System.out.println("\tL" + getActualLabelTemp() + ":");
+                continue;
+            }
+            if (nodo.value.equalsIgnoreCase("end if")) {
+                System.out.println("\tL" + labels.pop() + ":");
+                continue;
+            }
+
             InfijoPosfijo expresion = new InfijoPosfijo(nodo);
 
             String tipo = SintacticoSemantico.symbolTable.getEntry(nodo.lexema).type;
@@ -30,17 +69,17 @@ public class Intermedio {
             String posfijo = expresion.getExpresionPosfija().toString();
 
             List<Cuadruplo> cuadruplos = PosfijoACuadruplos.crearCuadruplos(posfijo, tipo);
+            cuadruplos.add(new Cuadruplo("Assig", "t" + getActualVarTemp(), " ", nodo.value));
 
             boolean pr = true;
             for (Cuadruplo c : cuadruplos) {
                 if (pr) {
                     System.out.println("Expresión: " + posfijo);
-                    System.out.println("Cuadruplo: ");
+                    //System.out.println("Cuadruplo: ");
                     pr = false;
                 }
                 System.out.println(c);
             }
-            System.out.println("");
 
         }
 
@@ -53,9 +92,7 @@ public class Intermedio {
                 //System.out.println(b.lexema + " " + tablaSimbolos.getEntry(b.lexema).type);
 
                 Cuadruplo c = new Cuadruplo(tablaSimbolos.getEntry(b.lexema).type, b.lexema, "", null);
-                System.out.println("Cuadruplo");
                 System.out.println(c);
-                System.out.println("");
             }
     }
 
@@ -65,10 +102,11 @@ public class Intermedio {
             String operador = condicion.children.get(1).lexema;
             String op2 = condicion.children.get(2).lexema;
 
-            Cuadruplo c = new Cuadruplo(operador, op1, op2, "");
-            System.out.println("Cuadruplo");
+            String varTemp = "t" + getContVarTemp();
+            Cuadruplo c = new Cuadruplo(operador, op1, op2, varTemp);
+            Cuadruplo d = new Cuadruplo("IF_FALSE", varTemp, " ", "L" + getContLabelTemp());
             System.out.println(c);
-            System.out.println("");
+            System.out.println(d);
 
     }
 
