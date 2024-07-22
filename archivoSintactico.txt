@@ -10,6 +10,7 @@ begin
     do
     begin
         x = 4 / ((2+1) + 1) * 2;
+        x = 1 + 1 + r;
         if 1 > 2 then
             begin
                 a = 2.2 + 1.1;
