@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -50,23 +51,20 @@ public class Intermedio {
             if (nodo.value.equalsIgnoreCase("else")) {
                 Cuadruplo goTo = new Cuadruplo("GOTO", " ", " ", "L"+(getContLabelTemp()));
                 cuadruplosIntermedio.add(goTo);
-                //System.out.println(goTo);
+
                 int labelAnterior = labels.size() - 2;
-                Cuadruplo label = new Cuadruplo("L" + labels.get(labelAnterior) + ":", " ", " ", " ");
+                Cuadruplo label = new Cuadruplo("L" + labels.get(labelAnterior), " ", " ", " ");
                 cuadruplosIntermedio.add(label);
-                //System.out.println("\tL" + labels.get(size-2) + ":");
                 labels.remove(labelAnterior);
                 continue;
             }
 
             if (nodo.value.equalsIgnoreCase("else end")) {
-                //System.out.println("\tL" + labels.pop() + ":");
                 continue;
             }
             if (nodo.value.equalsIgnoreCase("end if")) {
-                Cuadruplo label = new Cuadruplo("L" + labels.pop() + ":", " ", " ", " ");
+                Cuadruplo label = new Cuadruplo("L" + labels.pop(), " ", " ", " ");
                 cuadruplosIntermedio.add(label);
-                //System.out.println("\tL" + labels.pop() + ":");
                 continue;
             }
 
@@ -85,20 +83,6 @@ public class Intermedio {
             }
             cuadruplos.forEach(c -> cuadruplosIntermedio.add(c));
 
-
-            boolean pr = true;
-            for (Cuadruplo c : cuadruplos) {
-                if (pr) {
-                    //System.out.println("Expresión: " + posfijo);
-                    //System.out.println("Cuadruplo: ");
-                    pr = false;
-                }
-                //System.out.println(c);
-            }
-
-
-
-
         }
 
         imprimirCuadruplos();
@@ -106,9 +90,20 @@ public class Intermedio {
 
         /* GENERADOR DE CÓDIGO OBJETO */
 
-        GeneradorObjeto codeGenerator = new GeneradorObjeto(cuadruplosIntermedio);
+        /*GeneradorObjeto codeGenerator = new GeneradorObjeto(cuadruplosIntermedio);
         String asmCode = codeGenerator.generate();
         System.out.println(asmCode);
+
+        try {
+            codeGenerator.writeToFile("objeto.asm");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*/
+
+        GeneradorObjeto2.determineVariableTypes(cuadruplosIntermedio);
+        String codeEnsamblador = GeneradorObjeto2.generateAssembly(cuadruplosIntermedio);
+        System.out.println(codeEnsamblador);
+        GeneradorObjeto2.saveToFile("objeto.asm", codeEnsamblador);
 
 
     }
@@ -119,11 +114,8 @@ public class Intermedio {
 
     private void imprimirDeclaracion(TreeNode declaracion) {
             for (TreeNode b : declaracion.children) {
-                //System.out.println(b.lexema + " " + tablaSimbolos.getEntry(b.lexema).type);
-
                 Cuadruplo c = new Cuadruplo(tablaSimbolos.getEntry(b.lexema).type, b.lexema, "", null);
                 cuadruplosIntermedio.add(c);
-                //System.out.println(c);
             }
     }
 
@@ -138,8 +130,6 @@ public class Intermedio {
             cuadruplosIntermedio.add(c);
             Cuadruplo d = new Cuadruplo("IF_FALSE", varTemp, " ", "L" + getContLabelTemp());
             cuadruplosIntermedio.add(d);
-            //System.out.println(c);
-            //System.out.println(d);
 
     }
 

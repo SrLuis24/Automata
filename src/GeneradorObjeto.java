@@ -1,12 +1,17 @@
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
 class GeneradorObjeto {
     private List<Cuadruplo> quadruples;
     private StringBuilder asmCode;
+    private Set<String> tempVars;
 
     public GeneradorObjeto(List<Cuadruplo> quadruples) {
         this.quadruples = quadruples;
         this.asmCode = new StringBuilder();
+        this.tempVars = new HashSet<>();
     }
 
     public String generate() {
@@ -26,7 +31,15 @@ class GeneradorObjeto {
                 } else if (type.equals("Int")) {
                     asmCode.append(name).append(" dd 0\n");
                 }
+            } else {
+                // Identificar variables temporales
+                if (quad.resultado != null && quad.resultado.startsWith("t")) {
+                    tempVars.add(quad.resultado);
+                }
             }
+        }
+        for (String tempVar : tempVars) {
+            asmCode.append(tempVar).append(" db 0\n");
         }
         asmCode.append("\n");
     }
@@ -36,14 +49,14 @@ class GeneradorObjeto {
         asmCode.append("global _start\n");
         asmCode.append("_start:\n");
 
-        Map<String, Integer> labels = new HashMap<>();
+        Map<String, String> labels = new HashMap<>();
         int labelCount = 0;
 
         // Crear una lista de cuádruplos con etiquetas para etiquetarlas
         List<Cuadruplo> labeledQuadruples = new ArrayList<>();
         for (Cuadruplo quad : quadruples) {
             if (quad.operador.startsWith("L")) {
-                labels.put(quad.operador, labelCount++);
+                labels.put(quad.operador, "L" + labelCount++);
             }
             labeledQuadruples.add(quad);
         }
@@ -125,12 +138,12 @@ class GeneradorObjeto {
         asmCode.append(setInstruction).append(" byte [").append(quad.resultado).append("]\n");
     }
 
-    private void generateIfFalse(Cuadruplo quad, Map<String, Integer> labels) {
+    private void generateIfFalse(Cuadruplo quad, Map<String, String> labels) {
         asmCode.append("cmp byte [").append(quad.operando1).append("], 0\n");
         asmCode.append("je ").append(quad.resultado).append("\n");
     }
 
-    private void generateGoto(Cuadruplo quad, Map<String, Integer> labels) {
+    private void generateGoto(Cuadruplo quad, Map<String, String> labels) {
         asmCode.append("jmp ").append(quad.resultado).append("\n");
     }
 
@@ -143,5 +156,11 @@ class GeneradorObjeto {
             }
         }
         return "unknown";
+    }
+
+    public void writeToFile(String filename) throws IOException {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
+            writer.write(asmCode.toString());
+        }
     }
 }
