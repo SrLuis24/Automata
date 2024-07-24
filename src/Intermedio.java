@@ -75,7 +75,7 @@ public class Intermedio {
             String posfijo = expresion.getExpresionPosfija().toString();
             List<Cuadruplo> cuadruplos;
 
-            if (true) { // Para usar el optimizado usa true y false para sin optimizar
+            if (false) { // Para usar el optimizado usa true y false para sin optimizar
                 cuadruplos = PosfijoACuadruplosOptimizado.crearCuadruplosOptimizado(posfijo, nodo.lexema);
             } else {
                 cuadruplos = PosfijoACuadruplos.crearCuadruplos(posfijo, tipo);

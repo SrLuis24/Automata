@@ -23,7 +23,7 @@ public class GeneradorObjeto2 {
                     } else {
                         variableTypes.put(quad.resultado, "Int");
                     }
-                } else if (quad.operador.equals(">") || quad.operador.equals("IF_FALSE")) {
+                } else if (isOperador(quad.operador) || quad.operador.equals("IF_FALSE")) {
                     variableTypes.put(quad.resultado, "Int");
                 }
                 if (!temporaries.contains(quad.resultado)) {
@@ -32,12 +32,32 @@ public class GeneradorObjeto2 {
             }
 
             // Collect constants
-            if (quad.operador.equals("Assign") && (quad.operando1.matches("\\d+\\.\\d+") || quad.operando1.matches("\\d+"))) {
+            if (quad.operador.equals("Assign") && (quad.operando1.matches("\\d+\\.\\d+"))) {
                 if (!constants.contains(quad.operando1)) {
                     constants.add(quad.operando1);
                 }
             }
+            if (quad.operando1.matches("\\d+\\.\\d+")) {
+                if (!constants.contains(quad.operando1)) {
+                    constants.add(quad.operando1);
+                }
+            }
+            if (quad.operando2.matches("\\d+\\.\\d+")) {
+                if (!constants.contains(quad.operando2)) {
+                    constants.add(quad.operando2);
+                }
+            }
         }
+    }
+
+    private static boolean isOperador(String operador) {
+        String[] operadores = {"<", ">", ">=", "<=", "!=", "=="};
+        operador = operador.replace(" ", "");
+
+        for (String op : operadores) {
+            if (operador.equals(op)) return true;
+        }
+        return false;
     }
 
     private static String doubleToHexString(double value) {
@@ -57,9 +77,9 @@ public class GeneradorObjeto2 {
             String label = "const_" + constIndex++;
             constantMap.put(constant, label);
             if (constant.contains(".")) {
-                assemblyCode.append(label).append(" dq 0x").append(doubleToHexString(Double.parseDouble(constant))).append("\n");
+                assemblyCode.append(label).append(" dq 0x").append(doubleToHexString(Double.parseDouble(constant))).append(" ; "+ constant+"\n");
             } else {
-                assemblyCode.append(label).append(" dd ").append(constant).append("\n");
+                //assemblyCode.append(label).append(" dd ").append(constant).append("\n");
             }
         }
 
@@ -87,9 +107,100 @@ public class GeneradorObjeto2 {
                     }
                     break;
                 case ">":
-                    assemblyCode.append("mov eax, [").append(quad.operando1).append("]\n");
-                    assemblyCode.append("cmp eax, [").append(quad.operando2).append("]\n");
+                    if (constantMap.get(quad.operando1) != null) {
+                        String constantLabel = constantMap.get(quad.operando1);
+                        assemblyCode.append("movsd xmm1, qword [").append(constantLabel).append("]\n");
+                    } else {
+                        assemblyCode.append("mov eax, ").append(quad.operando1).append("\n");
+                    }
+                    if (constantMap.get(quad.operando2) != null) {
+                        String constantLabel = constantMap.get(quad.operando2);
+                        assemblyCode.append("movsd xmm2, qword [").append(constantLabel).append("]\n");
+                        assemblyCode.append("ucomisd xmm1, xmm2").append("\n");
+                    } else {
+                        assemblyCode.append("cmp eax, ").append(quad.operando2).append("\n");
+                    }
                     assemblyCode.append("setg byte [").append(quad.resultado).append("]\n");
+                    break;
+                case "<":
+                    if (constantMap.get(quad.operando1) != null) {
+                        String constantLabel = constantMap.get(quad.operando1);
+                        assemblyCode.append("movsd xmm1, qword [").append(constantLabel).append("]\n");
+                    } else {
+                        assemblyCode.append("mov eax, ").append(quad.operando1).append("\n");
+                    }
+                    if (constantMap.get(quad.operando2) != null) {
+                        String constantLabel = constantMap.get(quad.operando2);
+                        assemblyCode.append("movsd xmm2, qword [").append(constantLabel).append("]\n");
+                        assemblyCode.append("ucomisd xmm1, xmm2").append("\n");
+                    } else {
+                        assemblyCode.append("cmp eax, ").append(quad.operando2).append("\n");
+                    }
+                    assemblyCode.append("setl byte [").append(quad.resultado).append("]\n");
+                    break;
+                case "<=":
+                    if (constantMap.get(quad.operando1) != null) {
+                        String constantLabel = constantMap.get(quad.operando1);
+                        assemblyCode.append("movsd xmm1, qword [").append(constantLabel).append("]\n");
+                    } else {
+                        assemblyCode.append("mov eax, ").append(quad.operando1).append("\n");
+                    }
+                    if (constantMap.get(quad.operando2) != null) {
+                        String constantLabel = constantMap.get(quad.operando2);
+                        assemblyCode.append("movsd xmm2, qword [").append(constantLabel).append("]\n");
+                        assemblyCode.append("ucomisd xmm1, xmm2").append("\n");
+                    } else {
+                        assemblyCode.append("cmp eax, ").append(quad.operando2).append("\n");
+                    }
+                    assemblyCode.append("setle byte [").append(quad.resultado).append("]\n");
+                    break;
+                case ">=":
+                    if (constantMap.get(quad.operando1) != null) {
+                        String constantLabel = constantMap.get(quad.operando1);
+                        assemblyCode.append("movsd xmm1, qword [").append(constantLabel).append("]\n");
+                    } else {
+                        assemblyCode.append("mov eax, ").append(quad.operando1).append("\n");
+                    }
+                    if (constantMap.get(quad.operando2) != null) {
+                        String constantLabel = constantMap.get(quad.operando2);
+                        assemblyCode.append("movsd xmm2, qword [").append(constantLabel).append("]\n");
+                        assemblyCode.append("ucomisd xmm1, xmm2").append("\n");
+                    } else {
+                        assemblyCode.append("cmp eax, ").append(quad.operando2).append("\n");
+                    }
+                    assemblyCode.append("setge byte [").append(quad.resultado).append("]\n");
+                    break;
+                case "==":
+                    if (constantMap.get(quad.operando1) != null) {
+                        String constantLabel = constantMap.get(quad.operando1);
+                        assemblyCode.append("movsd xmm1, qword [").append(constantLabel).append("]\n");
+                    } else {
+                        assemblyCode.append("mov eax, ").append(quad.operando1).append("\n");
+                    }
+                    if (constantMap.get(quad.operando2) != null) {
+                        String constantLabel = constantMap.get(quad.operando2);
+                        assemblyCode.append("movsd xmm2, qword [").append(constantLabel).append("]\n");
+                        assemblyCode.append("ucomisd xmm1, xmm2").append("\n");
+                    } else {
+                        assemblyCode.append("cmp eax, ").append(quad.operando2).append("\n");
+                    }
+                    assemblyCode.append("sete byte [").append(quad.resultado).append("]\n");
+                    break;
+                case "!=":
+                    if (constantMap.get(quad.operando1) != null) {
+                        String constantLabel = constantMap.get(quad.operando1);
+                        assemblyCode.append("movsd xmm1, qword [").append(constantLabel).append("]\n");
+                    } else {
+                        assemblyCode.append("mov eax, ").append(quad.operando1).append("\n");
+                    }
+                    if (constantMap.get(quad.operando2) != null) {
+                        String constantLabel = constantMap.get(quad.operando2);
+                        assemblyCode.append("movsd xmm2, qword [").append(constantLabel).append("]\n");
+                        assemblyCode.append("ucomisd xmm1, xmm2").append("\n");
+                    } else {
+                        assemblyCode.append("cmp eax, ").append(quad.operando2).append("\n");
+                    }
+                    assemblyCode.append("setne byte [").append(quad.resultado).append("]\n");
                     break;
                 case "IF_FALSE":
                     assemblyCode.append("cmp byte [").append(quad.operando1).append("], 0\n");
@@ -99,26 +210,55 @@ public class GeneradorObjeto2 {
                     assemblyCode.append("jmp ").append(quad.resultado).append("\n");
                     break;
                 case "+":
-                    if (variableTypes.get(quad.resultado).equals("Real")) {
-                        assemblyCode.append("movsd xmm0, qword [").append(quad.operando1).append("]\n");
-                        assemblyCode.append("movsd xmm1, qword [").append(quad.operando2).append("]\n");
-                        assemblyCode.append("addsd xmm0, xmm1\n");
-                        assemblyCode.append("movsd qword [").append(quad.resultado).append("], xmm0\n");
-                    } else {
-                        assemblyCode.append("mov eax, [").append(quad.operando1).append("]\n");
-                        assemblyCode.append("add eax, [").append(quad.operando2).append("]\n");
-                        assemblyCode.append("mov [").append(quad.resultado).append("], eax\n");
-                    }
-                    break;
+                case "-":
                 case "*":
+                case "/":
                     if (variableTypes.get(quad.resultado).equals("Real")) {
-                        assemblyCode.append("movsd xmm0, qword [").append(quad.operando1).append("]\n");
-                        assemblyCode.append("movsd xmm1, qword [").append(quad.operando2).append("]\n");
-                        assemblyCode.append("mulsd xmm0, xmm1\n");
+                        if (constantMap.get(quad.operando1) != null) {
+                            String constantLabel = constantMap.get(quad.operando1);
+                            assemblyCode.append("movsd xmm0, qword [").append(constantLabel).append("]\n");
+                        } else {
+                            assemblyCode.append("movsd xmm0, qword [").append(quad.operando1).append("]\n");
+                        }
+                        if (constantMap.get(quad.operando2) != null) {
+                            String constantLabel = constantMap.get(quad.operando2);
+                            assemblyCode.append("movsd xmm1, qword [").append(constantLabel).append("]\n");
+                        } else {
+                            assemblyCode.append("movsd xmm1, qword [").append(quad.operando2).append("]\n");
+                        }
+                        switch (quad.operador) {
+                            case "+":
+                                assemblyCode.append("addsd xmm0, xmm1\n");
+                                break;
+                            case "-":
+                                assemblyCode.append("subsd xmm0, xmm1\n");
+                                break;
+                            case "*":
+                                assemblyCode.append("mulsd xmm0, xmm1\n");
+                                break;
+                            case "/":
+                                assemblyCode.append("divsd xmm0, xmm1\n");
+                                break;
+                        }
                         assemblyCode.append("movsd qword [").append(quad.resultado).append("], xmm0\n");
                     } else {
-                        assemblyCode.append("mov eax, [").append(quad.operando1).append("]\n");
-                        assemblyCode.append("imul eax, [").append(quad.operando2).append("]\n");
+                        assemblyCode.append("mov eax, ").append(quad.operando1).append("\n");
+                        switch (quad.operador) {
+                            case "+":
+                                assemblyCode.append("add eax, ").append(quad.operando2).append("\n");
+                                break;
+                            case "-":
+                                assemblyCode.append("sub eax, ").append(quad.operando2).append("\n");
+                                break;
+                            case "*":
+                                assemblyCode.append("imul eax, ").append(quad.operando2).append("\n");
+                                break;
+                            case "/":
+                                assemblyCode.append("mov ebx, ").append(quad.operando2).append("\n");
+                                assemblyCode.append("cdq\n"); // Sign-extend eax into edx:eax
+                                assemblyCode.append("idiv ebx\n");
+                                break;
+                        }
                         assemblyCode.append("mov [").append(quad.resultado).append("], eax\n");
                     }
                     break;
@@ -134,6 +274,22 @@ public class GeneradorObjeto2 {
         assemblyCode.append("mov rax, 60\nxor rdi, rdi\nsyscall\n");
 
         return assemblyCode.toString();
+    }
+
+    private static void variables(Cuadruplo quad, StringBuilder assemblyCode, Map<String, String> constantMap) {
+
+        if (constantMap.get(quad.operando1) != null) {
+            String constantLabel = constantMap.get(quad.operando1);
+            assemblyCode.append("movsd xmm0, qword [").append(constantLabel).append("]\n");
+        } else {
+            assemblyCode.append("movsd xmm0, qword [").append(quad.operando1).append("]\n");
+        }
+        if (constantMap.get(quad.operando2) != null) {
+            String constantLabel = constantMap.get(quad.operando2);
+            assemblyCode.append("movsd xmm0, qword [").append(constantLabel).append("]\n");
+        } else {
+            assemblyCode.append("movsd xmm0, qword [").append(quad.operando2).append("]\n");
+        }
     }
 
     public static void saveToFile(String fileName, String content) {
