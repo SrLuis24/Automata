@@ -599,7 +599,7 @@ public class SintacticoSemantico {
 
                     mismoTipo(condiciones);
                     //System.out.println(token + " <- " + lexema);
-                    condicionValida(condiciones);
+                    //          condicionValida(condiciones);
                     //        System.out.println(condicionValida.toString() + " <-- Resultado de condición");
                     listaIntermedio.add(condiciones);
                     printTree(condiciones, "");
@@ -633,6 +633,7 @@ public class SintacticoSemantico {
             String prmLexema = nodo.children.get(0).lexema;
             String operador = nodo.children.get(1).lexema;
             String segLexema = nodo.children.get(2).lexema;
+            String bloque = nodo.lexema;
 
             String primerTipo = symbolTable.getEntry(prmLexema).type;
             String segundoTipo = symbolTable.getEntry(segLexema).type;
@@ -649,6 +650,15 @@ public class SintacticoSemantico {
                 if (!(operador.equals("==") || operador.equals("!="))) {
                     System.out.println("No puedes usar este tipo de operador para Boolean");
                     System.exit(0);
+                }
+            }
+
+            if (bloque.equalsIgnoreCase("while")) {
+                if (nodo.children.get(0).token == 101 || nodo.children.get(0).token == 102) {
+                    if (nodo.children.get(2).token == 101 || nodo.children.get(2).token == 102) {
+                        System.out.println("No puedes usar dos constantes en la condición, se hará un bucle infinito. (Renglón " + renglon + ")");
+                        System.exit(0);
+                    }
                 }
             }
         }

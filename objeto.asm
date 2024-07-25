@@ -1,8 +1,7 @@
 section .data
 const_1 dq 0x3ff199999999999a ; 1.1
-const_2 dq 0x4024333333333333 ; 10.1
-const_3 dq 0x400199999999999a ; 2.2
-const_4 dq 0x3ff0000000000000 ; 1.0
+const_2 dq 0x400199999999999a ; 2.2
+const_3 dq 0x3ff0000000000000 ; 1.0
 t4 dd 0
 a dq 0
 t5 dd 0
@@ -28,10 +27,10 @@ movsd xmm0, qword [const_1]
 movsd xmm1, qword [const_1]
 addsd xmm0, xmm1
 movsd qword [t1], xmm0
-movsd xmm1, qword [const_2]
-movsd xmm2, qword [const_1]
+mov eax, a
+movsd xmm2, qword [const_2]
 ucomisd xmm1, xmm2
-setne byte [t2]
+setge byte [t2]
 cmp byte [t2], 0
 je L1
 mov eax, 2
@@ -56,14 +55,14 @@ add eax, r
 mov [t8], eax
 cmp byte [t9], 0
 je L2
-movsd xmm0, qword [const_3]
+movsd xmm0, qword [const_2]
 movsd xmm1, qword [const_1]
 addsd xmm0, xmm1
 movsd qword [t10], xmm0
 jmp L3
 L2:
-movsd xmm0, qword [const_3]
-movsd xmm1, qword [const_4]
+movsd xmm0, qword [const_2]
+movsd xmm1, qword [const_3]
 mulsd xmm0, xmm1
 movsd qword [t11], xmm0
 L3:
